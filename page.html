@@ -619,7 +619,7 @@ const INFO={
 const info=btn('info');
 function showInfo(k){const d=INFO[k];if(!d)return;btn('iQ').textContent=d.q;btn('iName').textContent=d.n;btn('iRole').textContent=d.r;
   const ul=btn('iFeat');ul.textContent='';d.f.forEach(t=>{const li=document.createElement('li');li.textContent=t;ul.appendChild(li);});
-  btn('iPrice').textContent=d.p||'';const a=btn('iLink');if(SRC[k]){a.href=SRC[k];a.hidden=false;}else a.hidden=true;
+  btn('iPrice').textContent=({grill:1,led:1,booth:1,bar:1})[k]?d.p:'En location pour la soirée';const a=btn('iLink');if(SRC[k]){a.href=SRC[k];a.hidden=false;}else a.hidden=true;
   info.hidden=false;if(innerWidth<=720){panel.hidden=true;hideBtn.setAttribute('aria-expanded','false');}}
 btn('iClose').addEventListener('click',()=>info.hidden=true);
 const ray=new THREE.Raycaster(),ndc=new THREE.Vector2();

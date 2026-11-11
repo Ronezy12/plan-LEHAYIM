@@ -9,7 +9,7 @@ Implantation technique du **Bal du Nouvel An LEHAYIM** : booth DJ façon festiva
 | `index.html` | Plan interactif : vue 3D, plan 2D vu du dessus, vue de face, visite guidée en 12 étapes, fiche de chaque appareil au toucher, export PNG |
 | `page.html` | Source de la page (régénérer `index.html` avec `./build.sh page.html`) |
 | `assets/logo-lehayim.jpg` | Logo LEHAYIM |
-| `docs/materiel-lehayim.pdf` | Liste du matériel : rôle, quantité, emplacement, caractéristiques, prix relevés chez Sonovente le 11/11/2026 et liens vers les fiches produits |
+| `docs/materiel-lehayim.pdf` | Liste du matériel : rôle, quantité, emplacement, caractéristiques et liens vers les fiches produits (matériel en location) |
 
 ## Ouvrir le plan
 
@@ -22,11 +22,11 @@ Implantation technique du **Bal du Nouvel An LEHAYIM** : booth DJ façon festiva
 - **Visite** : présentation guidée, la caméra se déplace de zone en zone.
 - **Photo** : enregistre l'image de la vue en PNG (sur téléphone, le partage propose « Enregistrer l'image » pour la galerie).
 - **Options** : points de vue, mode soirée, couleur d'ambiance, rideaux latéraux, repérage du matériel, liste du matériel.
-- Toucher un appareil ouvre sa fiche : rôle, fonctions, quantité, prix et lien source.
+- Toucher un appareil ouvre sa fiche : rôle, fonctions, quantité et lien source.
 
 ## À savoir
 
 - Les dimensions de la salle sont **estimées** d'après les photos (environ 14 × 22 m, plafond 5,8 m, mezzanine à 3 m) : à caler sur le plan coté du lieu.
 - Les appareils 3D sont des modèles simplifiés aux dimensions des vrais produits, sans logos.
-- Prix relevés le 11/11/2026 chez Sonovente ; pour une soirée, demander un devis de location (livraison, installation, technicien).
+- Tout le matériel est loué pour la soirée : la liste sert de base au devis du loueur (livraison, installation, technicien).
 - Machine à brume, accroches et VIP sur scène : à faire valider par l'hôtel et le loueur.
