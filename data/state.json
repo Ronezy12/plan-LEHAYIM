@@ -1,18 +1,18 @@
 {
- "version": 1,
+ "version": 2,
  "plans": [
   {
    "id": "lehayim",
-   "name": "LEHAYIM",
-   "title": "Bal du Nouvel An",
+   "name": "LEHAIIM",
+   "title": "Nouvelle an ",
    "venue": "Salle d'hôtel avec mezzanine, Paris",
    "date": "2026-12-31",
-   "organizer": "David",
+   "organizer": "LEHAIIM",
    "status": "ready",
    "visible": true,
    "planUrl": "https://claude.ai/artifact/J7f5S918ZnzvJyS27L7viM",
    "webUrl": "plans/lehayim/",
-   "pdf": "docs/materiel-lehayim.pdf",
+   "pdf": "docs/materiel-lehaiim.pdf",
    "desc": "Booth DJ façon festival sur la scène agrandie, ligne de caissons cardioïde, rappels sous la mezzanine, VIP derrière le DJ, lyres au sol, sur la mezzanine et sur le grill de l'hôtel. Plan en 3D, plan 2D, vue de face et visite guidée.",
    "photos": [
     {
@@ -39,6 +39,25 @@
      "src": "photos/lehayim-6.jpg",
      "caption": "Plan de l'organisateur (carré VIP, bars, mezzanine)"
     }
+   ],
+   "progress": 0,
+   "specs": [
+    [
+     "Enceintes",
+     "15"
+    ],
+    [
+     "Caissons",
+     "9"
+    ],
+    [
+     "Lyres",
+     "8 + grill hôtel"
+    ],
+    [
+     "Capacité",
+     "300 à 500"
+    ]
    ]
   },
   {
@@ -54,7 +73,9 @@
    "webUrl": "",
    "pdf": "",
    "desc": "Implantation son et lumière adaptée à un espace long et étroit, sur l'eau.",
-   "photos": []
+   "photos": [],
+   "progress": 0,
+   "specs": []
   },
   {
    "id": "seguin",
@@ -69,7 +90,9 @@
    "webUrl": "",
    "pdf": "",
    "desc": "Plan en cours de fabrication.",
-   "photos": []
+   "photos": [],
+   "progress": 0,
+   "specs": []
   },
   {
    "id": "jump",
@@ -84,7 +107,9 @@
    "webUrl": "",
    "pdf": "",
    "desc": "Plan en cours de fabrication.",
-   "photos": []
+   "photos": [],
+   "progress": 0,
+   "specs": []
   },
   {
    "id": "autres",
@@ -99,34 +124,17 @@
    "webUrl": "",
    "pdf": "",
    "desc": "Les prochaines salles arrivent ici.",
-   "photos": []
+   "photos": [],
+   "progress": 0,
+   "specs": []
   }
  ],
  "updates": [
   {
-   "date": "2026-11-12",
-   "plan": "lehayim",
-   "text": "Mouvements ralentis et rotation à 360° à deux doigts sur le plan 3D."
-  },
-  {
-   "date": "2026-11-12",
-   "plan": "lehayim",
-   "text": "Plan 2D, vue de face, export photo PNG et fiche de chaque appareil au toucher."
-  },
-  {
-   "date": "2026-11-12",
-   "plan": "lehayim",
-   "text": "Fiche matériel en PDF (location), signée DJ RON."
-  },
-  {
-   "date": "2026-11-12",
-   "plan": "",
-   "text": "Plans Péniche, Seguin Sound et Jump ouverts, en cours de fabrication."
-  },
-  {
    "date": "2026-11-11",
-   "plan": "lehayim",
-   "text": "Première version du plan LEHAYIM en 3D."
+   "plan": "",
+   "text": "Bienvenue sur les plans 3D 2026 !"
   }
- ]
+ ],
+ "savedAt": "2026-11-11T23:36:45.434Z"
 }

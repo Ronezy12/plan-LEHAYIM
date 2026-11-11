@@ -1,23 +1,23 @@
-# Plan LEHAYIM
+# Plan LEHAIIM
 
 *Fait par **DJ RON***
 
-Implantation technique du **Bal du Nouvel An LEHAYIM** : booth DJ façon festival, sonorisation, lumière, VIP sur scène et bars, dans la salle reconstruite d'après les photos.
+Implantation technique du **Bal du Nouvel An LEHAIIM** : booth DJ façon festival, sonorisation, lumière, VIP sur scène et bars, dans la salle reconstruite d'après les photos.
 
 ## Contenu
 
 | Chemin | Rôle |
 |---|---|
-| `index.html` | Accueil : dernières mises à jour, plan prêt (LEHAYIM), plans en cours (Péniche, Seguin Sound, Jump, autres salles) |
-| `plans/lehayim/` | Plan LEHAYIM : 3D, plan 2D, vue de face, visite guidée, fiche de chaque appareil, export PNG |
+| `index.html` | Accueil : dernières mises à jour, plan prêt (LEHAIIM), plans en cours (Péniche, Seguin Sound, Jump, autres salles) |
+| `plans/lehayim/` | Plan LEHAIIM : 3D, plan 2D, vue de face, visite guidée, fiche de chaque appareil, export PNG |
 | `data/state.json` | Contenu de l'accueil : plans, statuts, photos, mises à jour |
 | `photos/` | Photos des lieux |
-| `docs/materiel-lehayim.pdf` | Fiche matériel LEHAYIM (location) |
+| `docs/materiel-lehaiim.pdf` | Fiche matériel LEHAIIM (location) |
 | `src/` | Sources des pages ; régénérer avec `./build.sh src/accueil.html index.html` et `./build.sh src/plan-lehayim.html plans/lehayim/index.html ../../` |
 
 ## En ligne
 
-Activer **GitHub Pages** (Settings → Pages → branche `main`, dossier `/root`) : l'accueil s'ouvre à la racine, le plan LEHAYIM dans `plans/lehayim/`.
+Activer **GitHub Pages** (Settings → Pages → branche `main`, dossier `/root`) : l'accueil s'ouvre à la racine, le plan LEHAIIM dans `plans/lehayim/`.
 
 ## Espace admin
 
