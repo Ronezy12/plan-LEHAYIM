@@ -3,7 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<link rel="icon" href="assets/logo-lehayim.jpg">
+<link rel="icon" href="assets/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#141416">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="DJ RON">
 <style>:root{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -214,6 +219,66 @@ dialog.lb img{display:block;width:100%;max-height:80vh;object-fit:contain;transi
 .fade{animation:fd .25s ease both;}
 @keyframes fd{from{opacity:.001;transform:translateY(6px);}to{opacity:1;transform:none;}}
 
+/* Motion, profondeur et couches */
+:root{--dur-fast:140ms;--dur-mid:220ms;--dur-panel:320ms;--ease-out:cubic-bezier(.2,.7,.2,1);--z-bar:25;--z-save:30;--z-toast:60;}
+.btn{transition:background var(--dur-fast),border-color var(--dur-fast),transform 100ms,box-shadow var(--dur-mid),filter var(--dur-fast);}
+.btn.is-loading{pointer-events:none;opacity:.8;}
+.btn.is-loading::before{content:"";width:14px;height:14px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .7s linear infinite;}
+.btn.is-done{background:var(--ok);border-color:var(--ok);color:#fff;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.grain{position:relative;isolation:isolate;}
+.grain::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.hero{position:relative;}
+.hero::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:linear-gradient(135deg,var(--accent),transparent 40%,transparent 70%,var(--indigo));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:.7;}
+.hero .vis{background:radial-gradient(120% 90% at 70% 10%,color-mix(in srgb,var(--accent) 14%,var(--sunken)),var(--sunken) 60%);}
+/* Actions du plan */
+.quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;}
+.qa-btn{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:16px;border-radius:16px;border:1px solid var(--line);background:var(--surface);cursor:pointer;text-align:left;text-decoration:none;color:inherit;font:inherit;transition:transform var(--dur-mid) var(--ease-out),box-shadow var(--dur-mid),border-color var(--dur-fast);min-height:44px;}
+.qa-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--line-2);}
+.qa-btn:active{transform:translateY(0) scale(.99);}
+.qa-btn .ico{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);}
+.qa-btn b{font:700 15px var(--display);}
+.qa-btn small{font-size:12.5px;color:var(--ink-3);}
+/* Matériel */
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;}
+.eq div{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:baseline;padding:11px 16px;border-top:1px solid var(--line);}
+.eq div:first-child{border-top:0;}
+.eq .n{font:700 15px var(--mono);color:var(--accent);}
+.eq b{font-weight:600;}
+.eq small{color:var(--ink-3);margin-left:6px;}
+/* Questions pour le lieu */
+.ck-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.ring{--p:0;width:58px;height:58px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--p)*1%),var(--sunken) 0);display:grid;place-items:center;flex:none;}
+.ring span{width:44px;height:44px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font:700 12.5px var(--mono);}
+.cat{border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden;}
+.cat+.cat{margin-top:8px;}
+.cat summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;cursor:pointer;font:700 15px var(--display);min-height:48px;}
+.cat summary::-webkit-details-marker{display:none;}
+.cat summary .r{display:flex;align-items:center;gap:10px;}
+.cat summary svg.i{transition:transform var(--dur-mid) var(--ease-out);color:var(--ink-3);}
+.cat[open] summary svg.i{transform:rotate(90deg);}
+.cat .mini{width:54px;height:5px;border-radius:999px;background:var(--sunken);overflow:hidden;}
+.cat .mini i{display:block;height:100%;background:var(--ok);}
+.q{padding:12px 16px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px;}
+.qc{display:flex;gap:12px;align-items:flex-start;font-size:14.5px;cursor:pointer;}
+.qc input{appearance:none;width:22px;height:22px;border-radius:7px;border:1.5px solid var(--line-2);flex:none;margin-top:1px;display:grid;place-items:center;cursor:pointer;transition:background var(--dur-fast),border-color var(--dur-fast);}
+.qc input:checked{background:var(--ok);border-color:var(--ok);}
+.qc input:checked::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg);}
+.q.ok .qc span{color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--line-2);}
+.tick{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--line-2);display:grid;place-items:center;flex:none;color:#fff;}
+.q.ok .tick{background:var(--ok);border-color:var(--ok);}
+.tick svg.i{width:14px;height:14px;stroke-width:3;}
+.qa{height:40px;padding:0 12px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface-2);color:var(--ink);font-size:14px;margin-left:34px;width:calc(100% - 34px);}
+.ans{margin-left:34px;font-size:13.5px;color:var(--ink-2);background:var(--surface-2);border-radius:10px;padding:8px 12px;border-left:3px solid var(--ok);}
+.addq{display:flex;gap:8px;margin-top:10px;}
+.addq input{flex:1;height:42px;padding:0 12px;border-radius:11px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);font-size:14px;}
+.addq select{height:42px;border-radius:11px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);padding:0 8px;max-width:40%;}
+.msg{width:100%;min-height:min(52vh,440px);padding:14px;border-radius:14px;border:1px solid var(--line-2);background:var(--surface-2);color:var(--ink);font:14px/1.55 var(--body);resize:vertical;}
+.install{display:none;}
+.install.show{display:inline-flex;}
+@media (max-width:900px){.qa{margin-left:0;width:100%;}.ans{margin-left:0;}.addq{flex-wrap:wrap;}.addq select{max-width:100%;flex:1 1 100%;}}
+@media (prefers-reduced-motion:reduce){.btn.is-loading::before{animation:none;}}
+
 @media (max-width:900px){
   .app{grid-template-columns:1fr;}
   .side{display:none;}
@@ -251,12 +316,13 @@ dialog.lb img{display:block;width:100%;max-height:80vh;object-fit:contain;transi
   <aside class="side" aria-label="Navigation">
     <div class="logo"><div class="mk">RON</div><div><b>DJ RON</b><small>Plans d'implantation</small></div></div>
     <nav class="nav" id="sideNav"></nav>
+    <button class="btn sm install">Installer l’application</button>
     <div class="side-foot"><span>Fait par</span><b>DJ RON</b><span id="roleSide" class="role" style="margin-top:8px;align-self:flex-start">Organisateur</span></div>
   </aside>
   <div>
     <header class="appbar">
       <div class="logo"><div class="mk">RON</div><div><b>DJ RON</b></div></div>
-      <span id="roleTop" class="role">Organisateur</span>
+      <span style="display:flex;gap:8px;align-items:center"><button class="btn sm install" aria-label="Installer l’application">Installer</button><span id="roleTop" class="role">Organisateur</span></span>
     </header>
     <main class="content" id="view">
       <div class="skel" style="height:44px;width:260px;margin-bottom:22px"></div>
@@ -287,7 +353,10 @@ const ICON={
  up:'<path d="M12 19V5M6 11l6-6 6 6"/>', down:'<path d="M12 5v14M6 13l6 6 6-6"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>',
  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>', eyeoff:'<path d="M3 3l18 18"/><path d="M10.6 5.1A10 10 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.1 3.9M6.6 6.6A17 17 0 0 0 2 12s3.5 7 10 7a9.6 9.6 0 0 0 4.4-1"/>',
  spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>',
- upload:'<path d="M12 16V4M6 10l6-6 6 6"/><path d="M4 20h16"/>', check:'<path d="M5 12l5 5L20 7"/>'};
+ upload:'<path d="M12 16V4M6 10l6-6 6 6"/><path d="M4 20h16"/>', check:'<path d="M5 12l5 5L20 7"/>',
+ share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>',
+ chat:'<path d="M4 5h16v11H9l-5 4z"/>', quote:'<path d="M6 4h9l4 4v12H6z"/><path d="M9 12h7M9 16h5M9 8h3"/>', list:'<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>',
+ copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>', wa:'<path d="M4 20l1.4-4.2A8 8 0 1 1 8.4 18.7z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1.2-1.6-2-1-1 .8a4 4 0 0 1-1.9-1.9l.8-1-1-2z"/>', chev:'<path d="M9 6l6 6-6 6"/>', phone:'<rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/>'};
 const ic=(n,c='')=>`<svg class="i ${c}" viewBox="0 0 24 24" aria-hidden="true">${ICON[n]}</svg>`;
 const STATUS={ready:['Prêt','c-ready'],wip:['En fabrication','c-wip'],idea:['À venir','c-idea']};
 const onWeb=/github\.io$/.test(location.hostname);
@@ -334,7 +403,7 @@ function nav(){const cur=(location.hash.slice(1)||'home').split('-')[0];const it
 function route(){if(!state)return;let h=location.hash.slice(1)||'home';if(h==='studio'&&!owner)h='home';
   const v=$('#view');v.className='content fade';void v.offsetWidth;
   if(h.startsWith('plan-'))v.innerHTML=detailView(h.slice(5));else v.innerHTML=({home:homeView,plans:plansView,updates:updatesView,studio:studioView}[h]||homeView)();
-  nav();window.scrollTo(0,0);if(h==='studio')bindStudio();if(h==='plans')bindPlans();}
+  nav();window.scrollTo(0,0);if(h==='studio')bindStudio();if(h==='plans')bindPlans();if(h.startsWith('plan-'))bindDetail(h.slice(5));ensureSave();}
 addEventListener('hashchange',route);
 
 /* ---------- Vues organisateur ---------- */
@@ -347,7 +416,7 @@ function card(p){const pr=+p.progress||0;return `<a class="card" href="#plan-${e
 function homeView(){
   const ready=visible().filter(p=>p.status==='ready').sort((a,b)=>(a.date||'9').localeCompare(b.date||'9'));const p=ready[0];
   let hero='';if(p){const d=daysTo(p.date),link=planLink(p);
-    hero=`<article class="hero"><div class="txt"><div class="kick">${d!==null&&d>=0?`<span class="count"><b>J-${d}</b><span>avant la soirée</span></span>`:''}${chip(p)}</div>
+    hero=`<article class="hero grain"><div class="txt"><div class="kick">${d!==null&&d>=0?`<span class="count"><b>J-${d}</b><span>avant la soirée</span></span>`:''}${chip(p)}</div>
     <h3>${esc(p.name)}</h3><p class="sub">${esc(p.title)}</p>
     <div class="facts">${p.date?`<span>${ic('cal')}${fmt(p.date)}</span>`:''}${p.venue?`<span>${ic('pin')}${esc(p.venue)}</span>`:''}${p.organizer?`<span>${ic('user')}${esc(p.organizer)}</span>`:''}</div>
     ${p.specs&&p.specs.length?`<div class="specs">${p.specs.map(([k,v])=>`<div class="spec"><small>${esc(k)}</small><b>${esc(v)}</b></div>`).join('')}</div>`:''}
@@ -367,7 +436,7 @@ function bindPlans(){const draw=()=>{const q=query.toLowerCase();const list=visi
   $('#q').addEventListener('input',e=>{query=e.target.value;draw();});
   $('#filters').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;filter=b.dataset.f;document.querySelectorAll('#filters button').forEach(x=>x.setAttribute('aria-pressed',x===b));draw();});}
 function updatesView(){return `<div class="pagehead"><div><h1>Nouveautés</h1><p>Chaque changement apporté aux plans.</p></div></div><div class="feed">${feedItems(sortedUps())}</div>`;}
-function detailView(id){const p=state.plans.find(x=>x.id===id&&(owner||x.visible!==false));if(!p)return `<div class="empty">Ce plan n’existe pas ou n’est plus visible.</div>`;
+function detailCore(id){const p=state.plans.find(x=>x.id===id&&(owner||x.visible!==false));if(!p)return `<div class="empty">Ce plan n’existe pas ou n’est plus visible.</div>`;
   const link=planLink(p),pr=+p.progress||0,d=daysTo(p.date);
   return `<a class="btn sm quiet back" href="#plans">${ic('back')}Plans</a>
   <div class="detail"><div class="panelc" style="padding:0;overflow:hidden"><div class="cover" style="aspect-ratio:4/3">${cover(p)}${chip(p)}</div></div>
@@ -393,6 +462,67 @@ function lightbox(id,i){const p=state.plans.find(x=>x.id===id);const dl=$('#shee
   dl.onkeydown=e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1);};
   dl.showModal();}
 
+/* ---------- Fiche plan : actions, matériel, questions pour le lieu ---------- */
+const HUB_URL='https://claude.ai/artifact/KG45eeNseMvrfSzXBQsroo';
+let cm=null,installEvt=null;
+const shareUrl=id=>(onWeb?location.origin+location.pathname:HUB_URL)+'#plan-'+id;
+async function copyText(t,btn){let ok=false;try{await navigator.clipboard.writeText(t);ok=true;}catch(e){
+  const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();try{ok=document.execCommand('copy');}catch(_){}ta.remove();}
+  if(ok){toast('Copié');if(btn){const h=btn.innerHTML;btn.classList.add('is-done');btn.innerHTML=ic('check')+'Copié';setTimeout(()=>{btn.classList.remove('is-done');btn.innerHTML=h;},1600);}}
+  else toast('Copie impossible ici : sélectionne le texte à la main');return ok;}
+const wa=t=>'https://wa.me/?text='+encodeURIComponent(t);
+const eqText=p=>(p.equipment||[]).map(([n,i,c])=>`- ${n} × ${i}${c?' ('+c+')':''}`).join('\n');
+function detailView(id){const base=detailCore(id);const p=state.plans.find(x=>x.id===id&&(owner||x.visible!==false));if(!p)return base;
+  const L=p.checklist||[],done=L.filter(x=>x.done).length,pc=L.length?Math.round(done/L.length*100):0;
+  const cats=[...new Set(L.map(x=>x.c))];
+  const quick=`<div class="sect"><h2>Actions</h2></div><div class="quick">
+    <button class="qa-btn" id="aShare"><span class="ico">${ic('share')}</span><b>Partager le plan</b><small>Copier le lien direct</small></button>
+    <a class="qa-btn" id="aWa" href="${esc(wa(`Plan ${p.name}${p.title?' – '+p.title.trim():''} : ${shareUrl(p.id)}`))}" target="_blank" rel="noopener"><span class="ico">${ic('wa')}</span><b>Envoyer sur WhatsApp</b><small>Le lien du plan, prêt à envoyer</small></a>
+    ${(p.equipment||[]).length?`<button class="qa-btn" id="aQuote"><span class="ico">${ic('quote')}</span><b>Demander un devis</b><small>Message prêt pour le loueur</small></button>`:''}
+    ${cm?`<button class="qa-btn" id="aComment"><span class="ico">${ic('chat')}</span><b>Laisser un commentaire</b><small>Visible par DJ RON</small></button>`:''}</div>`;
+  const eq=(p.equipment||[]).length?`<div class="sect"><h2>Matériel en location</h2><span class="mono" style="color:var(--ink-3)">${p.equipment.reduce((a,[n])=>a+(+n||0),0)} éléments</span></div>
+    <div class="eq">${p.equipment.map(([n,i,c])=>`<div><span class="n">${esc(n)}×</span><span><b>${esc(i)}</b>${c?`<small>${esc(c)}</small>`:''}</span></div>`).join('')}</div>`:'';
+  const ck=L.length||owner?`<div class="sect"><h2>Questions pour le lieu</h2></div>
+    <div class="panelc"><div class="ck-head"><div class="ring" style="--p:${pc}"><span>${pc}%</span></div><div style="flex:1;min-width:180px"><b style="font:700 16px var(--display)">${done} réponse${done>1?'s':''} sur ${L.length}</b><div style="font-size:13px;color:var(--ink-3)">Tout ce qu’il faut confirmer avec le lieu avant le jour J.</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="cCopy">${ic('copy')}Copier les questions</button><a class="btn sm" id="cWa" href="#" target="_blank" rel="noopener">${ic('wa')}WhatsApp</a></div></div>
+    <div>${cats.map(c=>{const it=L.map((x,i)=>[x,i]).filter(([x])=>x.c===c),d=it.filter(([x])=>x.done).length;
+      return `<details class="cat"><summary><span>${esc(c)}</span><span class="r"><span class="mono" style="color:var(--ink-3)">${d}/${it.length}</span><span class="mini"><i style="width:${it.length?d/it.length*100:0}%"></i></span>${ic('chev')}</span></summary>
+      ${it.map(([x,i])=>`<div class="q${x.done?' ok':''}">${owner?`<label class="qc"><input type="checkbox" data-qd="${i}" ${x.done?'checked':''} aria-label="Réglé"><span>${esc(x.q)}</span></label><input class="qa" data-qa="${i}" value="${esc(x.a)}" placeholder="Réponse du lieu" aria-label="Réponse">`
+        :`<div class="qc"><span class="tick">${x.done?ic('check'):''}</span><span>${esc(x.q)}</span></div>${x.a?`<div class="ans">${esc(x.a)}</div>`:''}`}</div>`).join('')}</details>`;}).join('')||'<div class="empty">Aucune question pour l’instant.</div>'}</div>
+    ${owner?`<div class="addq"><select id="nqCat" aria-label="Catégorie">${(cats.length?cats:['Général']).map(c=>`<option>${esc(c)}</option>`).join('')}</select><input id="nqText" placeholder="Ajouter une question" aria-label="Nouvelle question"><button class="btn" id="nqAdd">${ic('plus')}Ajouter</button></div>`:''}</div>`:'';
+  return base.replace('<div class="sect"><h2>Photos du lieu</h2>',quick+eq+ck+'<div class="sect"><h2>Photos du lieu</h2>');}
+const questionsText=p=>{const L=(p.checklist||[]).filter(x=>!x.done);const cats=[...new Set(L.map(x=>x.c))];
+  return `Bonjour,\n\nPour la soirée ${p.name}${p.date?' du '+fmt(p.date):''}${p.venue?' ('+p.venue+')':''}, voici les points techniques à confirmer :\n\n`+cats.map(c=>c+'\n'+L.filter(x=>x.c===c).map(x=>'- '+x.q).join('\n')).join('\n\n')+'\n\nMerci beaucoup,\nDJ RON';};
+function bindDetail(id){const p=state.plans.find(x=>x.id===id);if(!p)return;const v=$('#view');
+  const cwa=$('#cWa');if(cwa)cwa.href=wa(questionsText(p));
+  $('#aShare')?.addEventListener('click',e=>copyText(shareUrl(p.id),null).then(ok=>{if(ok)toast('Lien du plan copié');}));
+  $('#cCopy')?.addEventListener('click',e=>copyText(questionsText(p),e.currentTarget));
+  $('#aQuote')?.addEventListener('click',()=>quoteSheet(p));
+  $('#aComment')?.addEventListener('click',async()=>{try{const r=await cm.openComposer({element:document.querySelector('.detail')||v});if(r&&r.opened===false)toast('Clique dans la page puis réessaie');}catch(e){toast('Commentaires indisponibles ici');}});
+  $('#nqAdd')?.addEventListener('click',()=>{const t=$('#nqText').value.trim();if(!t){$('#nqText').focus();return;}p.checklist.push({c:$('#nqCat').value,q:t,done:false,a:''});setDirty();const open=[...document.querySelectorAll('.cat[open] summary span:first-child')].map(s=>s.textContent);route();reopen(open);toast('Question ajoutée');});
+  v.onchange=e=>{const t=e.target;if(t.dataset.qd!==undefined){const q=p.checklist[+t.dataset.qd];q.done=t.checked;t.closest('.q').classList.toggle('ok',t.checked);setDirty();refreshCk(p);}};
+  v.oninput=e=>{const t=e.target;if(t.dataset.qa!==undefined){p.checklist[+t.dataset.qa].a=t.value;setDirty();}};}
+function reopen(names){document.querySelectorAll('.cat').forEach(d=>{if(names.includes(d.querySelector('summary span').textContent))d.open=true;});}
+function refreshCk(p){const L=p.checklist,done=L.filter(x=>x.done).length,pc=L.length?Math.round(done/L.length*100):0;const r=document.querySelector('.ring');if(r){r.style.setProperty('--p',pc);r.querySelector('span').textContent=pc+'%';r.nextElementSibling.querySelector('b').textContent=`${done} réponse${done>1?'s':''} sur ${L.length}`;}
+  document.querySelectorAll('.cat').forEach(d=>{const qs=d.querySelectorAll('.q'),ok=d.querySelectorAll('.q.ok').length;d.querySelector('summary .mono').textContent=ok+'/'+qs.length;d.querySelector('.mini i').style.width=(qs.length?ok/qs.length*100:0)+'%';});
+  const cwa=$('#cWa');if(cwa)cwa.href=wa(questionsText(p));}
+function quoteSheet(p){const dl=$('#sheet');dl.className='';dl.ontouchstart=dl.ontouchmove=dl.ontouchend=dl.onkeydown=dl.oninput=dl.onchange=dl.ondrop=dl.ondragover=dl.ondragleave=null;
+  const txt=`Bonjour,\n\nJe souhaiterais un devis de location pour une soirée${p.date?' le '+fmt(p.date):''}${p.venue?', '+p.venue:''}.\n\nMatériel :\n${eqText(p)}\n\nPrestations souhaitées : livraison, installation, réglage, technicien sur place pendant la soirée et démontage.\n\nPouvez-vous m’indiquer vos disponibilités et un tarif ?\n\nMerci,\nDJ RON`;
+  dl.innerHTML=`<div class="sheet"><div class="sheet-h"><h3>Demande de devis</h3><button class="btn sm icon quiet" data-close aria-label="Fermer">${ic('x')}</button></div>
+  <div class="sheet-b"><p style="margin:0;color:var(--ink-2);font-size:14px">Le message est modifiable avant l’envoi.</p><label class="field">Message pour le loueur<textarea class="msg" id="qMsg">${esc(txt)}</textarea></label></div>
+  <div class="sheet-f"><a class="btn" id="qWa" href="${esc(wa(txt))}" target="_blank" rel="noopener">${ic('wa')}WhatsApp</a><button class="btn primary" id="qCopy">${ic('copy')}Copier le message</button></div></div>`;
+  dl.oninput=e=>{if(e.target.id==='qMsg')$('#qWa').href=wa(e.target.value);};
+  dl.onclick=e=>{const b=e.target.closest('button');if(e.target===dl||b&&b.hasAttribute('data-close')){dl.close();return;}if(b&&b.id==='qCopy')copyText($('#qMsg').value,b);};dl.showModal();}
+const templateChecklist=()=>{const t=state.plans.find(x=>x.id==='lehayim');return t?(t.checklist||[]).map(x=>({c:x.c,q:x.q,done:false,a:''})):[];};
+
+/* ---------- Installation sur l'écran d'accueil (version GitHub) ---------- */
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;document.querySelectorAll('.install').forEach(b=>b.classList.add('show'));});
+document.addEventListener('click',async e=>{const b=e.target.closest('.install');if(!b)return;
+  if(installEvt){installEvt.prompt();const r=await installEvt.userChoice;installEvt=null;if(r.outcome==='accepted')toast('Application installée');document.querySelectorAll('.install').forEach(x=>x.classList.remove('show'));}
+  else toast('Sur iPhone : touche Partager puis « Sur l’écran d’accueil »');});
+if(onWeb){if(/iphone|ipad/i.test(navigator.userAgent)&&!navigator.standalone)document.querySelectorAll('.install').forEach(b=>b.classList.add('show'));
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});}
+
 /* ---------- Studio (propriétaire) ---------- */
 function studioView(){
   return `<div class="pagehead"><div><h1>Studio</h1><p>Tes plans, tes photos et les nouveautés. Visible par toi seul.</p></div><button class="btn primary" id="newPlan">${ic('plus')}Nouveau plan</button></div>
@@ -406,13 +536,12 @@ function studioView(){
     <label class="field">Texte<textarea id="uText" placeholder="Ex. : plan Péniche, première implantation des enceintes"></textarea></label>
     <button class="btn dark" id="uAdd">${ic('plus')}Ajouter aux nouveautés</button></div>
     <div class="feed" style="margin-top:12px">${state.updates.length?state.updates.map((u,i)=>`<div class="it" style="grid-template-columns:minmax(0,1fr) auto"><div><div class="t">${esc(u.text)}</div><div class="meta">${fmt(u.date)}</div></div><button class="btn sm icon quiet danger" data-delup="${i}" aria-label="Retirer">${ic('trash')}</button></div>`).join(''):'<div class="empty">Aucune nouveauté.</div>'}</div></section></div>
-  ${dirty?saveBar():''}`;}
-const saveBar=()=>`<div class="savebar" id="savebar"><span>Modifications non enregistrées</span><button class="btn primary" id="save">Enregistrer</button></div>`;
-function setDirty(){dirty=true;if(!$('#savebar')&&location.hash==='#studio'){$('#view').insertAdjacentHTML('beforeend',saveBar());$('#save').onclick=save;}}
+`;}
+function ensureSave(){if(!(dirty&&owner)){$('#savebar')?.remove();return;}if($('#savebar'))return;document.body.insertAdjacentHTML('beforeend',`<div class="savebar" id="savebar" role="region" aria-label="Enregistrement"><span>Modifications non enregistrées</span><button class="btn primary" id="save">${ic('check')}Enregistrer les modifications</button></div>`);$('#save').onclick=save;}
+function setDirty(){dirty=true;ensureSave();}
 function bindStudio(){const v=$('#view');
-  $('#newPlan').onclick=()=>{const p={id:'plan-'+Date.now().toString(36),name:'',title:'',venue:'',date:'',organizer:'',status:'wip',progress:0,visible:true,planUrl:'',webUrl:'',pdf:'',desc:'',photos:[],specs:[]};editPlan(p,true);};
+  $('#newPlan').onclick=()=>{const p={id:'plan-'+Date.now().toString(36),name:'',title:'',venue:'',date:'',organizer:'',status:'wip',progress:0,visible:true,planUrl:'',webUrl:'',pdf:'',desc:'',photos:[],specs:[],equipment:[],checklist:templateChecklist()};editPlan(p,true);};
   $('#uAdd').onclick=()=>{const t=$('#uText').value.trim();if(!t){$('#uText').focus();toast('Écris le texte de la nouveauté');return;}state.updates.unshift({date:today(),plan:$('#uPlan').value,text:t});dirty=true;route();toast('Nouveauté ajoutée');};
-  if($('#save'))$('#save').onclick=save;
   v.onclick=e=>{const b=e.target.closest('button');if(!b)return;
     if(b.dataset.edit)editPlan(state.plans[+b.dataset.edit],false);
     else if(b.dataset.vis){const p=state.plans[+b.dataset.vis];p.visible=p.visible===false;dirty=true;route();}
@@ -427,6 +556,7 @@ function editPlan(orig,isNew){const p=JSON.parse(JSON.stringify(orig));const dl=
     <label class="field">Avancement (%)<input type="number" min="0" max="100" step="5" data-k="progress" value="${+p.progress||0}"></label></div>
     <label class="field">Description<textarea data-k="desc">${esc(p.desc)}</textarea></label>
     <label class="field">Chiffres clés <small>Une ligne par élément, sous la forme « Enceintes : 15 »</small><textarea data-specs>${esc((p.specs||[]).map(([a,b])=>a+' : '+b).join('\n'))}</textarea></label>
+    <label class="field">Matériel en location <small>Une ligne par élément : « 2 × Pioneer DJ CDJ-3000X (platines) »</small><textarea data-eq>${esc((p.equipment||[]).map(([n,i,c])=>`${n} × ${i}${c?' ('+c+')':''}`).join('\n'))}</textarea></label>
     <div class="fgrid">${F('planUrl','Lien du plan 3D','url','https://claude.ai/artifact/…')}${F('pdf','Lien de la fiche matériel','text','docs/…pdf')}</div>
     <label class="switch">Visible pour l’organisateur<input type="checkbox" data-k="visible" ${p.visible!==false?'checked':''}></label>
     <div class="field">Photos du lieu<div class="pthumbs">${p.photos.map((ph,j)=>`<figure><img src="${esc(src(ph.src))}" alt=""><button class="btn sm icon x" data-delph="${j}" aria-label="Retirer la photo">${ic('x')}</button><input data-cap="${j}" value="${esc(ph.caption)}" placeholder="Légende"></figure>`).join('')}</div>
@@ -437,6 +567,7 @@ function editPlan(orig,isNew){const p=JSON.parse(JSON.stringify(orig));const dl=
   draw();
   dl.oninput=e=>{const t=e.target;if(t.dataset.k)p[t.dataset.k]=t.type==='checkbox'?t.checked:t.type==='number'?Math.max(0,Math.min(100,+t.value||0)):t.value;
     if(t.dataset.cap!==undefined)p.photos[+t.dataset.cap].caption=t.value;
+    if(t.hasAttribute('data-eq'))p.equipment=t.value.split('\n').map(l=>l.match(/^\s*(\d+)\s*[x×]\s*(.+?)(?:\s*\(([^)]*)\))?\s*$/i)).filter(Boolean).map(m=>[+m[1],m[2].trim(),m[3]||'']);
     if(t.hasAttribute('data-specs'))p.specs=t.value.split('\n').map(l=>l.split(/\s*:\s*/)).filter(a=>a[0]&&a[1]).map(a=>[a[0].trim(),a.slice(1).join(':').trim()]);};
   dl.onchange=e=>{if(e.target.id==='pick'&&e.target.files.length)add([...e.target.files]);};
   dl.ondragover=e=>{const d=e.target.closest('#drop');if(d){e.preventDefault();d.classList.add('over');}};
@@ -453,22 +584,22 @@ async function shrink(file){const bmp=await createImageBitmap(file);const k=Math
   const c=document.createElement('canvas');c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
   return await new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error('blob')),'image/jpeg',0.84));}
 async function save(){const b=$('#save');if(!art||!owner){toast('Enregistrement réservé à l’admin, sur la page Claude');return;}
-  b.disabled=true;b.textContent='Enregistrement…';
+  b.disabled=true;b.classList.add('is-loading');b.textContent='Enregistrement…';
   const used=new Set(state.plans.flatMap(p=>p.photos.map(x=>x.src)));
   state.version=(state.version||0)+1;state.savedAt=new Date().toISOString();
   const files={'data/state.json':{content:JSON.stringify(state,null,1),contentType:'application/json'}};
   for(const [path,blob] of pending)if(used.has(path))files[path]=blob;
-  try{await art.publish(files);pending.clear();dirty=false;$('#savebar')?.remove();toast('Enregistré : l’organisateur voit la nouvelle version');}
-  catch(err){const c=err&&err.code;b.disabled=false;b.textContent='Enregistrer';
+  try{await art.publish(files);pending.clear();dirty=false;b.classList.remove('is-loading');b.classList.add('is-done');b.innerHTML=ic('check')+'Enregistré';setTimeout(()=>ensureSave(),1200);toast('Enregistré : l’organisateur voit la nouvelle version');}
+  catch(err){const c=err&&err.code;b.disabled=false;b.classList.remove('is-loading');b.innerHTML=ic('check')+'Enregistrer les modifications';
     toast(c==='conflict'?'Une autre version a été enregistrée, la page va se recharger':c==='capability_disabled'?'Enregistrement indisponible dans cette vue':c==='not_writer'||c==='not_granted'?'Pas de droits d’enregistrement ici':'Échec de l’enregistrement ('+(c||'erreur')+')');}}
 addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
 
 /* ---------- Démarrage ---------- */
-fetch('data/state.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();}).then(s=>{state=s;s.plans.forEach(p=>{p.photos=p.photos||[];p.specs=p.specs||[];});nav();route();})
+fetch('data/state.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();}).then(s=>{state=s;s.plans.forEach(p=>{p.photos=p.photos||[];p.specs=p.specs||[];p.checklist=p.checklist||[];p.equipment=p.equipment||[];});nav();route();})
   .catch(()=>{$('#view').innerHTML='<div class="empty">Les plans n’ont pas pu être chargés. Recharge la page.</div>';});
 (async()=>{if(!(window.claude&&typeof window.claude.use==='function'))return;
-  const [a,u]=await Promise.all([window.claude.use('artifact').catch(()=>null),window.claude.use('user').catch(()=>null)]);
-  art=a;owner=!!(u&&await u.isOwner().catch(()=>false));if(owner&&state){nav();if(location.hash==='#studio')route();}})();
+  const [a,u,c]=await Promise.all([window.claude.use('artifact').catch(()=>null),window.claude.use('user').catch(()=>null),window.claude.use('comments').catch(()=>null)]);
+  art=a;cm=c;owner=!!(u&&await u.isOwner().catch(()=>false));if(state&&(owner||cm)){nav();route();}})();
 </script>
 
 </body>

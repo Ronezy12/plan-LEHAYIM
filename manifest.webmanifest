@@ -1,0 +1,5 @@
+{
+ "name":"Plans DJ RON","short_name":"DJ RON","description":"Plans d'implantation son et lumière de DJ RON",
+ "start_url":"./","scope":"./","display":"standalone","background_color":"#f2f1ee","theme_color":"#141416","lang":"fr",
+ "icons":[{"src":"assets/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},{"src":"assets/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]
+}

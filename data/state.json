@@ -58,6 +58,484 @@
      "Capacité",
      "300 à 500"
     ]
+   ],
+   "checklist": [
+    {
+     "c": "Accès et horaires",
+     "q": "À quelle heure peut-on accéder à la salle pour le montage ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Accès et horaires",
+     "q": "Peut-on monter la veille (30 décembre) ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Accès et horaires",
+     "q": "À quelle heure la salle doit-elle être libérée après la soirée ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Accès et horaires",
+     "q": "Y a-t-il un quai de déchargement ? Où se gare le camion du loueur ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Accès et horaires",
+     "q": "Monte-charge ou ascenseur jusqu'à la salle : dimensions de la porte et charge maximale ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Accès et horaires",
+     "q": "Itinéraire de la porte de livraison jusqu'à la salle : escaliers, marches, portes étroites ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Accès et horaires",
+     "q": "Faut-il des badges ou une liste des techniciens pour la sécurité ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Accès et horaires",
+     "q": "Où stocker les flight cases vides pendant la soirée ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Salle et dimensions",
+     "q": "Plan coté de la salle (PDF ou DWG) disponible ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Salle et dimensions",
+     "q": "Hauteur sous plafond exacte dans la grande salle ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Salle et dimensions",
+     "q": "Hauteur sous plafond sous la mezzanine ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Salle et dimensions",
+     "q": "Dimensions et hauteur exactes de la scène existante ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Salle et dimensions",
+     "q": "Charge admissible de la scène (kg/m²) ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Salle et dimensions",
+     "q": "Peut-on agrandir la scène ? L'hôtel a-t-il des praticables en plus ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Salle et dimensions",
+     "q": "Faut-il protéger le parquet (moquette, plaques) sous le matériel lourd ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Salle et dimensions",
+     "q": "Capacité officielle autorisée (jauge) de la salle et de la mezzanine ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Salle et dimensions",
+     "q": "Une autre salle de l'hôtel est-elle occupée le même soir ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Électricité",
+     "q": "Puissance électrique disponible pour la technique (kW) ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Électricité",
+     "q": "Nombre et type de prises disponibles : 16 A, P17 32 A mono ou triphasé ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Électricité",
+     "q": "Que contiennent les boîtiers au pied de l'écran LED (courant, audio, DMX) ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Électricité",
+     "q": "Peut-on avoir des circuits séparés pour le son et pour la lumière ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Électricité",
+     "q": "Où sont les tableaux électriques et qui y a accès pendant la soirée ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Électricité",
+     "q": "Un électricien de l'hôtel est-il présent pendant le montage et la soirée ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Électricité",
+     "q": "Distance entre les prises et l'emplacement de la régie ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Son et niveau sonore",
+     "q": "Y a-t-il un limiteur de son ? À quel niveau (dB) et coupe-t-il le courant ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Son et niveau sonore",
+     "q": "Heure limite de la musique forte ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Son et niveau sonore",
+     "q": "Quel système son est installé (marques, puissance, zones) ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Son et niveau sonore",
+     "q": "Peut-on se brancher sur le système de l'hôtel pour l'étage et le lounge ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Son et niveau sonore",
+     "q": "Les haut-parleurs du plafond de la mezzanine sont-ils des enceintes ou des détecteurs ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Son et niveau sonore",
+     "q": "Micros sans fil disponibles sur place ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Son et niveau sonore",
+     "q": "Y a-t-il des contraintes de voisinage (chambres au-dessus, autres événements) ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Lumière et écran LED",
+     "q": "Modèles et nombre exacts des lyres et découpes du grill ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Lumière et écran LED",
+     "q": "Peut-on utiliser le grill lumière de l'hôtel ? Avec ou sans leur technicien ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Lumière et écran LED",
+     "q": "Console lumière disponible ? Protocole DMX ou Art-Net, accès au patch ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Lumière et écran LED",
+     "q": "Les uplights de l'hôtel sont-ils pilotables (couleur, intensité) ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Lumière et écran LED",
+     "q": "Les appliques et spots de la salle sont-ils gradables pendant la soirée ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Lumière et écran LED",
+     "q": "Taille et résolution de l'écran LED ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Lumière et écran LED",
+     "q": "Entrées de l'écran LED (HDMI, SDI) et où se branche-t-on ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Lumière et écran LED",
+     "q": "Qui pilote l'écran ? Peut-on diffuser nos visuels et le compte à rebours ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Accroche et décor",
+     "q": "Points d'accroche autorisés et charge maximale des rails ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Accroche et décor",
+     "q": "Peut-on suspendre des enceintes ou des lumières ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Accroche et décor",
+     "q": "Peut-on poser des lyres derrière le garde-corps de la mezzanine ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Accroche et décor",
+     "q": "Rideaux noirs sur les côtés autorisés ? Classement M1 exigé ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Accroche et décor",
+     "q": "Peut-on fixer quelque chose aux murs, piliers ou boiseries ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Accroche et décor",
+     "q": "Décoration (ballons, banderoles, fleurs) : règles particulières ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Effets et sécurité incendie",
+     "q": "Machine à brume autorisée ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Effets et sécurité incendie",
+     "q": "Faut-il neutraliser les détecteurs de fumée ? Qui le fait, à quel prix ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Effets et sécurité incendie",
+     "q": "Un agent de sécurité incendie (SSIAP) est-il prévu ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Effets et sécurité incendie",
+     "q": "Canons à confettis ou CO2 autorisés à minuit ? Qui nettoie ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Effets et sécurité incendie",
+     "q": "Étincelles froides ou pyrotechnie autorisées ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Effets et sécurité incendie",
+     "q": "Bougies autorisées sur les tables ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Public et sécurité",
+     "q": "Combien d'agents de sécurité de l'hôtel pour la soirée ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Public et sécurité",
+     "q": "Qui contrôle l'accès au VIP sur la scène ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Public et sécurité",
+     "q": "Plan d'évacuation : quelles issues de secours doivent rester libres ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Public et sécurité",
+     "q": "Emplacement des extincteurs à ne pas masquer ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Public et sécurité",
+     "q": "Poste de secours ou personne formée aux premiers secours ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Public et sécurité",
+     "q": "Vestiaire prévu ? Géré par qui ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Public et sécurité",
+     "q": "Attestation d'assurance responsabilité civile demandée au prestataire ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Mobilier, bars et loges",
+     "q": "Canapés, tables et mange-debout fournis par l'hôtel ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Mobilier, bars et loges",
+     "q": "Les bars sont-ils tenus par l'hôtel ou par un traiteur ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Mobilier, bars et loges",
+     "q": "Électricité et eau disponibles aux emplacements des bars ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Mobilier, bars et loges",
+     "q": "Une loge pour le DJ et les chanteurs (avec miroir, prises) ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Mobilier, bars et loges",
+     "q": "Repas et boissons pour l'équipe technique ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Mobilier, bars et loges",
+     "q": "Wi-Fi disponible pour la régie (nom, mot de passe) ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Contacts et budget",
+     "q": "Nom et téléphone du régisseur ou responsable technique de l'hôtel ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Contacts et budget",
+     "q": "Contact joignable le soir même en cas de problème ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Contacts et budget",
+     "q": "Heure des balances son ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Contacts et budget",
+     "q": "Frais supplémentaires prévus (technicien, électricité, nettoyage, sécurité) ?",
+     "done": false,
+     "a": ""
+    },
+    {
+     "c": "Contacts et budget",
+     "q": "Date limite pour envoyer la fiche technique finale à l'hôtel ?",
+     "done": false,
+     "a": ""
+    }
+   ],
+   "equipment": [
+    [
+     2,
+     "Pioneer DJ CDJ-3000X",
+     "platines"
+    ],
+    [
+     1,
+     "Pioneer DJ DJM-A9",
+     "table de mixage"
+    ],
+    [
+     6,
+     "RCF NX 932-A",
+     "4 en façade, 2 retours DJ"
+    ],
+    [
+     9,
+     "RCF SUB 8004-AS",
+     "caissons 18 pouces"
+    ],
+    [
+     2,
+     "RCF NX 12-SMA",
+     "retours chanteurs"
+    ],
+    [
+     7,
+     "RCF ART 710-A MK5",
+     "front fills, rappels, lounge"
+    ],
+    [
+     1,
+     "Allen & Heath SQ-5",
+     "console numérique"
+    ],
+    [
+     2,
+     "Shure SLXD24E / SM58",
+     "micros sans fil"
+    ],
+    [
+     8,
+     "Chauvet DJ Intimidator Trio",
+     "lyres"
+    ],
+    [
+     2,
+     "Cameo Thunder Wash 600 RGBW",
+     "stroboscopes"
+    ],
+    [
+     1,
+     "Antari HZ-500",
+     "machine à brume, si validée"
+    ],
+    [
+     1,
+     "Console lumière",
+     "si celle de l’hôtel n’est pas disponible"
+    ]
    ]
   },
   {
@@ -75,7 +553,9 @@
    "desc": "Implantation son et lumière adaptée à un espace long et étroit, sur l'eau.",
    "photos": [],
    "progress": 0,
-   "specs": []
+   "specs": [],
+   "checklist": [],
+   "equipment": []
   },
   {
    "id": "seguin",
@@ -92,7 +572,9 @@
    "desc": "Plan en cours de fabrication.",
    "photos": [],
    "progress": 0,
-   "specs": []
+   "specs": [],
+   "checklist": [],
+   "equipment": []
   },
   {
    "id": "jump",
@@ -109,7 +591,9 @@
    "desc": "Plan en cours de fabrication.",
    "photos": [],
    "progress": 0,
-   "specs": []
+   "specs": [],
+   "checklist": [],
+   "equipment": []
   },
   {
    "id": "autres",
@@ -126,7 +610,9 @@
    "desc": "Les prochaines salles arrivent ici.",
    "photos": [],
    "progress": 0,
-   "specs": []
+   "specs": [],
+   "checklist": [],
+   "equipment": []
   }
  ],
  "updates": [
