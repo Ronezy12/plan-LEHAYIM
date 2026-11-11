@@ -1,5 +1,7 @@
 # Plan LEHAYIM
 
+*Fait par **DJ RON***
+
 Implantation technique du **Bal du Nouvel An LEHAYIM** : booth DJ façon festival, sonorisation, lumière, VIP sur scène et bars, dans la salle reconstruite d'après les photos.
 
 ## Contenu
