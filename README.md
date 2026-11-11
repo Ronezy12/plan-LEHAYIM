@@ -7,6 +7,8 @@ Implantation technique du **Bal du Nouvel An LEHAYIM** : booth DJ façon festiva
 | Fichier | Rôle |
 |---|---|
 | `index.html` | Plan interactif : vue 3D, plan 2D vu du dessus, vue de face, visite guidée en 12 étapes, fiche de chaque appareil au toucher, export PNG |
+| `page.html` | Source de la page (régénérer `index.html` avec `./build.sh page.html`) |
+| `assets/logo-lehayim.jpg` | Logo LEHAYIM |
 | `docs/materiel-lehayim.pdf` | Liste du matériel : rôle, quantité, emplacement, caractéristiques, prix relevés chez Sonovente le 11/11/2026 et liens vers les fiches produits |
 
 ## Ouvrir le plan
