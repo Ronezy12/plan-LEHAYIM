@@ -14,6 +14,9 @@
 }
 html,body{height:100%;}
 html,body,button,a,input,select,textarea,label{touch-action:manipulation;}
+html,body{overscroll-behavior:none;overflow:hidden;position:fixed;inset:0;width:100%;}
+.panel,.tour,.info{overscroll-behavior:contain;}
+
 body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidden;-webkit-tap-highlight-color:transparent;}
 #stage{position:fixed;inset:0;touch-action:none;}
 canvas{display:block;}
