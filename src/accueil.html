@@ -1,0 +1,273 @@
+<title>Plans DJ RON</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout : application à une colonne ; en-tête collant avec bascule Organisateur/Admin ; accueil = mises à jour + plan prêt + plans en cours ; admin = édition et enregistrement */
+:root{
+  --bg:#0b0a0e; --bg-2:#141219; --card:#17151d; --card-2:#1e1b26; --line:rgba(232,200,120,.18); --line-2:rgba(232,200,120,.4);
+  --fg:#f1ebdd; --muted:#a9a294; --gold:#e8c878; --gold-ink:#1b1608; --red:#c1424d; --violet:#5b4fb0; --ok:#7fd6a4; --warn:#f0b35a;
+  --display:"Sora",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif;
+  color-scheme:dark;
+}
+html,body{background:var(--bg);color:var(--fg);}
+body{font:15px/1.55 var(--body);}
+*{box-sizing:border-box;}
+a{color:var(--gold);}
+button,input,select,textarea{font:inherit;color:inherit;}
+button{cursor:pointer;border:1px solid var(--line);background:transparent;border-radius:10px;padding:9px 14px;font-weight:500;font-size:13.5px;transition:border-color .15s,background .15s,transform .1s;}
+button:hover{border-color:var(--line-2);}
+button:active{transform:scale(.98);}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+button:disabled{opacity:.4;cursor:default;}
+.cta{background:linear-gradient(180deg,#f0d48c,#d9b25f);color:var(--gold-ink);border-color:transparent;font-weight:600;}
+.ghost{color:var(--muted);}
+.danger{color:#ff8f8f;border-color:rgba(255,120,120,.3);}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));}
+
+header{position:sticky;top:0;z-index:5;background:rgba(11,10,14,.86);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);}
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;}
+.mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--red),var(--violet));display:grid;place-items:center;font:700 12px var(--display);letter-spacing:.06em;color:#fff;flex:none;}
+.brand b{font:700 15px/1.1 var(--display);letter-spacing:.12em;display:block;}
+.brand span{font-size:12px;color:var(--muted);}
+.seg{display:flex;padding:3px;gap:3px;border:1px solid var(--line);border-radius:12px;background:var(--bg-2);}
+.seg button{border:0;padding:7px 12px;border-radius:9px;font-size:13px;}
+.seg button[aria-pressed="true"]{background:linear-gradient(90deg,var(--red),var(--violet));color:#fff;}
+
+main{padding-block:28px 64px;display:flex;flex-direction:column;gap:40px;}
+.hero h1{font:700 clamp(26px,5vw,40px)/1.1 var(--display);margin:0 0 8px;text-wrap:balance;}
+.hero p{margin:0;color:var(--muted);max-width:60ch;}
+.eyebrow{font:600 11px var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:0 0 12px;}
+h2{font:600 20px/1.2 var(--display);margin:0 0 14px;}
+
+.feed{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden;}
+.feed li{list-style:none;display:grid;grid-template-columns:92px 1fr;gap:12px;padding:12px 16px;border-top:1px solid var(--line);}
+.feed li:first-child{border-top:0;}
+.feed time{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:1px;}
+.feed .t{font-size:14px;min-width:0;}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:999px;border:1px solid var(--line-2);color:var(--gold);margin-right:6px;}
+.feed ul{margin:0;padding:0;}
+
+.feature{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);border:1px solid var(--line-2);border-radius:20px;overflow:hidden;background:var(--card);}
+.feature .vis{background:var(--bg-2);border-right:1px solid var(--line);min-height:280px;display:flex;align-items:center;justify-content:center;padding:14px;}
+.feature .vis svg{width:100%;height:auto;max-height:380px;}
+.feature .txt{padding:22px;display:flex;flex-direction:column;gap:12px;min-width:0;}
+.feature h3{font:700 26px/1.1 var(--display);margin:0;letter-spacing:.04em;}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted);}
+.status{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;}
+.status::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;}
+.s-ready{color:var(--ok);background:rgba(127,214,164,.1);}
+.s-wip{color:var(--warn);background:rgba(240,179,90,.1);}
+.s-idea{color:var(--muted);background:rgba(169,162,148,.1);}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;}
+.actions a{display:inline-flex;align-items:center;text-decoration:none;border:1px solid var(--line);border-radius:10px;padding:9px 14px;font-size:13.5px;font-weight:500;color:var(--fg);}
+.actions a.cta{color:var(--gold-ink);}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
+.card{border:1px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden;display:flex;flex-direction:column;text-align:left;padding:0;}
+.card .ph{height:120px;background:repeating-linear-gradient(135deg,rgba(240,179,90,.08) 0 12px,transparent 12px 24px),var(--bg-2);display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase;}
+.card .ph img{width:100%;height:100%;object-fit:cover;}
+.card .body{padding:14px 16px;display:flex;flex-direction:column;gap:6px;}
+.card h4{font:600 17px/1.2 var(--display);margin:0;}
+.card p{margin:0;font-size:13px;color:var(--muted);}
+
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;}
+.photos figure{margin:0;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:var(--bg-2);}
+.photos img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;}
+.photos figcaption{font-size:11.5px;color:var(--muted);padding:6px 8px;}
+
+dialog{border:1px solid var(--line-2);border-radius:18px;background:var(--card);color:var(--fg);padding:0;width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 40px);}
+dialog::backdrop{background:rgba(0,0,0,.65);}
+.dlg{padding:20px;display:flex;flex-direction:column;gap:14px;}
+.dlg-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+
+/* Admin */
+.panel{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:18px;display:flex;flex-direction:column;gap:14px;}
+.fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
+label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--muted);}
+input,select,textarea{background:var(--bg-2);border:1px solid var(--line);border-radius:9px;padding:9px 10px;font-size:14px;color:var(--fg);width:100%;}
+textarea{min-height:76px;resize:vertical;}
+.check{flex-direction:row;align-items:center;gap:8px;font-size:13px;color:var(--fg);}
+.check input{width:auto;}
+.ptitle{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.ptitle h3{font:600 17px var(--display);margin:0;}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px;}
+.thumbs figure{margin:0;position:relative;width:110px;}
+.thumbs img{width:110px;height:82px;object-fit:cover;border-radius:8px;border:1px solid var(--line);display:block;}
+.thumbs button{position:absolute;top:4px;right:4px;padding:2px 7px;font-size:11px;background:rgba(11,10,14,.85);}
+.thumbs input{margin-top:4px;padding:5px 6px;font-size:11.5px;}
+.savebar{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px 10px 16px;border:1px solid var(--line-2);border-radius:14px;background:rgba(23,21,29,.95);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+.savebar span{font-size:13px;color:var(--muted);}
+.savebar.dirty span{color:var(--warn);}
+.note{font-size:12.5px;color:var(--muted);}
+
+footer{border-top:1px solid var(--line);padding-block:20px calc(20px + env(safe-area-inset-bottom,0px));font-size:12.5px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+footer b{font:700 13px var(--display);letter-spacing:.12em;background:linear-gradient(90deg,#f0d48c,var(--red));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--card-2);border:1px solid var(--line-2);border-radius:12px;padding:10px 14px;font-size:13.5px;z-index:20;max-width:calc(100vw - 32px);}
+
+@media (max-width:760px){
+  .feature{grid-template-columns:1fr;}
+  .feature .vis{border-right:0;border-bottom:1px solid var(--line);min-height:0;}
+  .feed li{grid-template-columns:1fr;gap:2px;}
+  .brand span{display:none;}
+}
+@media (prefers-reduced-motion:reduce){button{transition:none;}}
+</style>
+
+<header>
+  <div class="wrap head">
+    <div class="brand"><div class="mark" aria-hidden="true">RON</div><div><b>DJ RON</b><span>Plans d'implantation</span></div></div>
+    <div class="seg" id="roles" role="group" aria-label="Espace" hidden>
+      <button data-r="org" aria-pressed="true">Organisateur</button>
+      <button data-r="admin" aria-pressed="false">Admin</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+  <section class="hero">
+    <p class="eyebrow" id="roleLabel">Espace organisateur</p>
+    <h1>Les plans de vos soirées</h1>
+    <p>Choisissez un plan pour le voir en 3D, en plan 2D ou de face, avec la liste du matériel et les photos du lieu.</p>
+  </section>
+  <div id="view"><p class="note">Chargement des plans…</p></div>
+</main>
+
+<footer class="wrap"><span>Fait par <b>DJ RON</b></span><span id="ver"></span></footer>
+
+<dialog id="dlg"><div class="dlg" id="dlgBody"></div></dialog>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const STATUS={ready:['Prêt','s-ready'],wip:['En cours de fabrication','s-wip'],idea:['À venir','s-idea']};
+const onWeb=/github\.io$/.test(location.hostname);
+let state=null,role='org',art=null,canEdit=false,dirty=false;
+const pending=new Map(),blobUrls=new Map();
+const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtDate=d=>{if(!d)return '';const [y,m,j]=d.split('-');return j&&m?`${j}/${m}/${y}`:d;};
+const today=()=>new Date().toISOString().slice(0,10);
+const imgSrc=p=>blobUrls.get(p)||p;
+const planLink=p=>onWeb?(p.webUrl||p.planUrl):(p.planUrl||p.webUrl);
+let toastT=0;function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,3600);}
+
+/* Aperçu du plan LEHAYIM, vu du dessus */
+const LEHAYIM_SVG=`<svg viewBox="0 0 280 420" role="img" aria-label="Aperçu du plan LEHAYIM vu du dessus"><rect x="10" y="10" width="260" height="400" rx="6" fill="#1a1720" stroke="#3a3346"/>
+<rect x="70" y="12" width="140" height="6" rx="2" fill="#5b4fb0"/><rect x="62" y="22" width="156" height="80" rx="3" fill="#24212b" stroke="#4a4256"/>
+<rect x="110" y="78" width="60" height="16" rx="3" fill="#e8c878"/><rect x="74" y="30" width="44" height="26" rx="4" fill="#3a3346"/><rect x="162" y="30" width="44" height="26" rx="4" fill="#3a3346"/>
+<circle cx="56" cy="36" r="6" fill="none" stroke="#8d8578"/><circle cx="224" cy="36" r="6" fill="none" stroke="#8d8578"/>
+${[0,1,2,3,4,5].map(i=>`<rect x="${86+i*18}" y="108" width="14" height="12" rx="2" fill="#e0714a"/>`).join('')}
+<rect x="40" y="98" width="14" height="22" rx="2" fill="#8b7cf0"/><rect x="226" y="98" width="14" height="22" rx="2" fill="#8b7cf0"/>
+<rect x="56" y="140" width="168" height="130" rx="4" fill="none" stroke="#e8c878" stroke-dasharray="5 4" opacity=".7"/><text x="140" y="210" fill="#e8c878" font-size="12" font-family="Inter,sans-serif" text-anchor="middle" opacity=".85">piste</text>
+<rect x="16" y="120" width="30" height="140" rx="3" fill="#24304f"/><rect x="236" y="160" width="28" height="56" rx="3" fill="#3b2a20"/>
+<rect x="120" y="278" width="40" height="14" rx="3" fill="#5aa0e8"/>
+<rect x="12" y="300" width="232" height="108" fill="url(#hatch)" opacity=".9"/><rect x="244" y="230" width="24" height="70" fill="#2a2630"/>
+<defs><pattern id="hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="#1f1c26"/><line x1="0" y1="0" x2="0" y2="10" stroke="#2c2836" stroke-width="4"/></pattern></defs>
+<rect x="30" y="384" width="90" height="16" rx="4" fill="#1d3c42"/><rect x="140" y="384" width="80" height="16" rx="4" fill="#1d3c42"/><rect x="60" y="346" width="50" height="14" rx="4" fill="#1d3c42"/><rect x="150" y="346" width="50" height="14" rx="4" fill="#1d3c42"/>
+${[60,140,220].map(x=>`<rect x="${x-6}" y="302" width="12" height="8" rx="2" fill="#e46aa0"/>`).join('')}
+<text x="128" y="334" fill="#a9a294" font-size="11" font-family="Inter,sans-serif" text-anchor="middle">sous mezzanine, canapés</text></svg>`;
+
+function render(){
+  $('#roleLabel').textContent=role==='admin'?'Espace admin':'Espace organisateur';
+  document.querySelectorAll('#roles button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.r===role));
+  $('#view').innerHTML='';$('#view').appendChild(role==='admin'?adminView():orgView());
+}
+
+/* ---------- Côté organisateur ---------- */
+function orgView(){
+  const f=document.createElement('div');f.style.cssText='display:flex;flex-direction:column;gap:40px';
+  const plans=state.plans.filter(p=>p.visible!==false);
+  const ready=plans.filter(p=>p.status==='ready'),rest=plans.filter(p=>p.status!=='ready');
+  const ups=state.updates.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6);
+  f.insertAdjacentHTML('beforeend',`<section><p class="eyebrow">Dernières mises à jour</p><div class="feed"><ul>${ups.map(u=>{const p=state.plans.find(x=>x.id===u.plan);
+    return `<li><time datetime="${esc(u.date)}">${fmtDate(u.date)}</time><div class="t">${p?`<span class="tag">${esc(p.name)}</span>`:''}${esc(u.text)}</div></li>`;}).join('')||'<li><div class="t">Aucune mise à jour pour l’instant.</div></li>'}</ul></div></section>`);
+  ready.forEach(p=>{const [sl,sc]=STATUS[p.status];const link=planLink(p);
+    f.insertAdjacentHTML('beforeend',`<section><p class="eyebrow">Plan prêt</p><article class="feature"><div class="vis">${p.id==='lehayim'?LEHAYIM_SVG:(p.photos[0]?`<img src="${esc(imgSrc(p.photos[0].src))}" alt="" style="width:100%;border-radius:10px">`:'')}</div>
+    <div class="txt"><span class="status ${sc}">${sl}</span><h3>${esc(p.name)}</h3><div class="meta"><span>${esc(p.title)}</span>${p.date?`<span>${fmtDate(p.date)}</span>`:''}${p.venue?`<span>${esc(p.venue)}</span>`:''}${p.organizer?`<span>Organisateur : ${esc(p.organizer)}</span>`:''}</div>
+    <p style="margin:0;font-size:14px">${esc(p.desc)}</p>
+    <div class="actions">${link?`<a class="cta" href="${esc(link)}" target="_blank" rel="noopener">Ouvrir le plan 3D</a>`:''}${p.pdf?`<a href="${esc(p.pdf)}" target="_blank" rel="noopener">Fiche matériel (PDF)</a>`:''}<button data-open="${esc(p.id)}">Photos du lieu (${p.photos.length})</button></div></div></article></section>`);});
+  f.insertAdjacentHTML('beforeend',`<section><p class="eyebrow">En cours de fabrication</p><div class="grid">${rest.map(p=>{const [sl,sc]=STATUS[p.status]||STATUS.idea;
+    return `<button class="card" data-open="${esc(p.id)}"><div class="ph">${p.photos[0]?`<img src="${esc(imgSrc(p.photos[0].src))}" alt="">`:'Plan en préparation'}</div><div class="body"><span class="status ${sc}">${sl}</span><h4>${esc(p.name)}</h4><p>${esc(p.title)}${p.venue&&p.venue!=='À définir'?' · '+esc(p.venue):''}</p></div></button>`;}).join('')}</div></section>`);
+  f.addEventListener('click',e=>{const b=e.target.closest('[data-open]');if(b)openPlan(b.dataset.open);});
+  return f;
+}
+function openPlan(id){const p=state.plans.find(x=>x.id===id);if(!p)return;const [sl,sc]=STATUS[p.status]||STATUS.idea;const link=planLink(p);
+  $('#dlgBody').innerHTML=`<div class="dlg-top"><div><span class="status ${sc}">${sl}</span><h2 style="margin:8px 0 4px">${esc(p.name)}</h2><div class="meta"><span>${esc(p.title)}</span>${p.date?`<span>${fmtDate(p.date)}</span>`:''}${p.venue?`<span>${esc(p.venue)}</span>`:''}</div></div><button id="dlgClose">Fermer</button></div>
+  <p style="margin:0">${esc(p.desc)}</p>
+  <div class="actions">${link?`<a class="cta" href="${esc(link)}" target="_blank" rel="noopener">Ouvrir le plan 3D</a>`:'<span class="note">Le plan 3D arrive bientôt.</span>'}${p.pdf?`<a href="${esc(p.pdf)}" target="_blank" rel="noopener">Fiche matériel (PDF)</a>`:''}</div>
+  ${p.photos.length?`<div class="photos">${p.photos.map(ph=>`<figure><img src="${esc(imgSrc(ph.src))}" alt="${esc(ph.caption)}" loading="lazy"><figcaption>${esc(ph.caption)}</figcaption></figure>`).join('')}</div>`:'<p class="note">Pas encore de photos.</p>'}`;
+  const d=$('#dlg');d.showModal();$('#dlgClose').onclick=()=>d.close();}
+$('#dlg').addEventListener('click',e=>{if(e.target.id==='dlg')e.target.close();});
+
+/* ---------- Côté admin ---------- */
+function setDirty(v=true){dirty=v;const sb=$('#savebar');if(sb){sb.classList.toggle('dirty',dirty);sb.querySelector('span').textContent=dirty?'Modifications non enregistrées':'Tout est enregistré';}}
+function adminView(){
+  const f=document.createElement('div');f.style.cssText='display:flex;flex-direction:column;gap:24px';
+  f.insertAdjacentHTML('beforeend',`<section class="panel"><div class="ptitle"><h3>Publier une mise à jour</h3></div>
+    <div class="fields"><label>Plan concerné<select id="uPlan"><option value="">Général</option>${state.plans.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select></label><label>Date<input type="date" id="uDate" value="${today()}"></label></div>
+    <label>Texte<textarea id="uText" placeholder="Ex. : plan Péniche, première implantation des enceintes"></textarea></label>
+    <div class="actions"><button class="cta" id="uAdd">Ajouter à l’accueil</button></div>
+    <div class="feed"><ul>${state.updates.map((u,i)=>`<li><time>${fmtDate(u.date)}</time><div class="t" style="display:flex;justify-content:space-between;gap:10px"><span>${esc(u.text)}</span><button class="danger" data-delup="${i}">Retirer</button></div></li>`).join('')}</ul></div></section>`);
+  const list=document.createElement('section');list.style.cssText='display:flex;flex-direction:column;gap:14px';
+  list.insertAdjacentHTML('beforeend',`<div class="ptitle"><h2 style="margin:0">Plans</h2><button class="cta" id="pAdd">Nouveau plan</button></div>`);
+  state.plans.forEach((p,i)=>list.appendChild(planEditor(p,i)));
+  f.appendChild(list);
+  f.insertAdjacentHTML('beforeend',`<div class="savebar${dirty?' dirty':''}" id="savebar"><span>${dirty?'Modifications non enregistrées':'Tout est enregistré'}</span><button class="cta" id="save">Enregistrer</button></div>
+    <p class="note">« Enregistrer » publie une nouvelle version de la page : David voit les changements à sa prochaine ouverture. Les photos sont réduites avant l’envoi.</p>`);
+  f.querySelector('#uAdd').onclick=()=>{const t=f.querySelector('#uText').value.trim();if(!t){toast('Écris le texte de la mise à jour');return;}
+    state.updates.unshift({date:f.querySelector('#uDate').value||today(),plan:f.querySelector('#uPlan').value,text:t});setDirty();render();toast('Mise à jour ajoutée, pense à enregistrer');};
+  f.querySelector('#pAdd').onclick=()=>{const id='plan-'+Date.now().toString(36);state.plans.push({id,name:'Nouveau plan',title:'',venue:'',date:'',organizer:'',status:'wip',visible:true,planUrl:'',webUrl:'',pdf:'',desc:'',photos:[]});setDirty();render();};
+  f.querySelector('#save').onclick=save;
+  f.addEventListener('click',e=>{const d=e.target.closest('[data-delup]');if(d){state.updates.splice(+d.dataset.delup,1);setDirty();render();}});
+  return f;
+}
+function planEditor(p,i){
+  const s=document.createElement('article');s.className='panel';
+  const F=(k,lab,type='text')=>`<label>${lab}<input type="${type}" data-k="${k}" value="${esc(p[k])}"></label>`;
+  s.innerHTML=`<div class="ptitle"><h3>${esc(p.name)||'Sans nom'}</h3><div class="actions" style="margin:0">
+    <button data-mv="-1" ${i===0?'disabled':''} aria-label="Monter">↑</button><button data-mv="1" ${i===state.plans.length-1?'disabled':''} aria-label="Descendre">↓</button><button class="danger" data-del>Supprimer</button></div></div>
+    <div class="fields">${F('name','Nom')}${F('title','Événement')}${F('venue','Lieu')}${F('date','Date','date')}${F('organizer','Organisateur')}
+    <label>Statut<select data-k="status">${Object.entries(STATUS).map(([k,[l]])=>`<option value="${k}" ${p.status===k?'selected':''}>${l}</option>`).join('')}</select></label>
+    ${F('planUrl','Lien du plan 3D (Claude)','url')}${F('webUrl','Lien du plan 3D (GitHub)')}${F('pdf','Lien de la fiche matériel')}</div>
+    <label>Description<textarea data-k="desc">${esc(p.desc)}</textarea></label>
+    <label class="check"><input type="checkbox" data-k="visible" ${p.visible!==false?'checked':''}> Visible pour l’organisateur</label>
+    <div><div class="eyebrow" style="margin-bottom:8px">Photos (${p.photos.length})</div><div class="thumbs">${p.photos.map((ph,j)=>`<figure><img src="${esc(imgSrc(ph.src))}" alt=""><button class="danger" data-delph="${j}" aria-label="Retirer la photo">×</button><input data-cap="${j}" value="${esc(ph.caption)}" placeholder="Légende"></figure>`).join('')}</div>
+    <label style="margin-top:10px;max-width:280px">Ajouter des photos<input type="file" accept="image/*" multiple data-up></label></div>`;
+  s.addEventListener('input',e=>{const t=e.target;if(t.dataset.k){p[t.dataset.k]=t.type==='checkbox'?t.checked:t.value;if(t.dataset.k==='name')s.querySelector('h3').textContent=t.value||'Sans nom';setDirty();}
+    if(t.dataset.cap!==undefined){p.photos[+t.dataset.cap].caption=t.value;setDirty();}});
+  s.addEventListener('change',async e=>{const t=e.target;if(t.dataset.up===undefined||!t.files.length)return;toast('Préparation des photos…');
+    for(const file of t.files){try{const blob=await shrink(file);const path=`photos/${p.id}-${Date.now().toString(36)}${Math.random().toString(36).slice(2,5)}.jpg`;
+      pending.set(path,blob);blobUrls.set(path,URL.createObjectURL(blob));p.photos.push({src:path,caption:''});}catch(err){toast('Une photo n’a pas pu être lue');}}
+    setDirty();render();toast('Photos ajoutées, pense à enregistrer');});
+  s.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+    if(b.dataset.delph!==undefined){const ph=p.photos.splice(+b.dataset.delph,1)[0];if(ph&&pending.has(ph.src))pending.delete(ph.src);setDirty();render();}
+    else if(b.dataset.mv){const j=i+(+b.dataset.mv);[state.plans[i],state.plans[j]]=[state.plans[j],state.plans[i]];setDirty();render();}
+    else if(b.dataset.del!==undefined){if(b.dataset.confirm){state.plans.splice(i,1);setDirty();render();}else{b.dataset.confirm='1';b.textContent='Confirmer la suppression';setTimeout(()=>{if(b.isConnected){delete b.dataset.confirm;b.textContent='Supprimer';}},4000);}}});
+  return s;
+}
+async function shrink(file){const bmp=await createImageBitmap(file);const k=Math.min(1,1600/Math.max(bmp.width,bmp.height));
+  const c=document.createElement('canvas');c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+  return await new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error('blob')),'image/jpeg',0.84));}
+async function save(){const btn=$('#save');
+  if(!art){toast('L’enregistrement n’est disponible que sur la page Claude, en tant qu’admin');return;}
+  btn.disabled=true;btn.textContent='Enregistrement…';
+  state.version=(state.version||0)+1;state.savedAt=new Date().toISOString();
+  const files={'data/state.json':{content:JSON.stringify(state,null,1),contentType:'application/json'}};
+  for(const [path,blob] of pending)files[path]=blob;
+  try{await art.publish(files);pending.clear();setDirty(false);toast('Enregistré : David verra la nouvelle version');}
+  catch(err){const c=err&&err.code;toast(c==='conflict'?'Une autre version a été enregistrée entre-temps, la page va se recharger':c==='capability_disabled'?'L’enregistrement n’est pas disponible dans cette vue':c==='not_writer'||c==='not_granted'?'Tu n’as pas les droits pour enregistrer ici':'Échec de l’enregistrement ('+(c||'erreur')+')');}
+  btn.disabled=false;btn.textContent='Enregistrer';}
+addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
+
+$('#roles').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;role=b.dataset.r;render();});
+
+/* ---------- Démarrage ---------- */
+fetch('data/state.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();}).then(s=>{state=s;$('#ver').textContent=s.savedAt?'Mis à jour le '+fmtDate(s.savedAt.slice(0,10)):'';render();})
+  .catch(()=>{$('#view').innerHTML='<p class="note">Les plans n’ont pas pu être chargés. Recharge la page.</p>';});
+(async()=>{if(!(window.claude&&typeof window.claude.use==='function'))return;
+  const [a,u]=await Promise.all([window.claude.use('artifact').catch(()=>null),window.claude.use('user').catch(()=>null)]);
+  art=a;canEdit=!!(u&&await u.canEdit().catch(()=>false));
+  if(canEdit&&art){$('#roles').hidden=false;}})();
+</script>

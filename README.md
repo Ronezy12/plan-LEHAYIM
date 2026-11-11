@@ -6,24 +6,29 @@ Implantation technique du **Bal du Nouvel An LEHAYIM** : booth DJ façon festiva
 
 ## Contenu
 
-| Fichier | Rôle |
+| Chemin | Rôle |
 |---|---|
-| `index.html` | Plan interactif : vue 3D, plan 2D vu du dessus, vue de face, visite guidée en 12 étapes, fiche de chaque appareil au toucher, export PNG |
-| `page.html` | Source de la page (régénérer `index.html` avec `./build.sh page.html`) |
-| `assets/logo-lehayim.jpg` | Logo LEHAYIM |
-| `docs/materiel-lehayim.pdf` | Liste du matériel : rôle, quantité, emplacement, caractéristiques et liens vers les fiches produits (matériel en location) |
+| `index.html` | Accueil : dernières mises à jour, plan prêt (LEHAYIM), plans en cours (Péniche, Seguin Sound, Jump, autres salles) |
+| `plans/lehayim/` | Plan LEHAYIM : 3D, plan 2D, vue de face, visite guidée, fiche de chaque appareil, export PNG |
+| `data/state.json` | Contenu de l'accueil : plans, statuts, photos, mises à jour |
+| `photos/` | Photos des lieux |
+| `docs/materiel-lehayim.pdf` | Fiche matériel LEHAYIM (location) |
+| `src/` | Sources des pages ; régénérer avec `./build.sh src/accueil.html index.html` et `./build.sh src/plan-lehayim.html plans/lehayim/index.html ../../` |
 
-## Ouvrir le plan
+## En ligne
 
-- En ligne : activer **GitHub Pages** (Settings → Pages → branche `main`, dossier `/root`), puis ouvrir l'adresse donnée.
-- En local : ouvrir `index.html` dans un navigateur récent (connexion internet nécessaire pour charger three.js et les polices).
+Activer **GitHub Pages** (Settings → Pages → branche `main`, dossier `/root`) : l'accueil s'ouvre à la racine, le plan LEHAYIM dans `plans/lehayim/`.
 
-## Utilisation
+## Espace admin
+
+L'édition (plans, photos, mises à jour) se fait sur la version Claude de l'accueil, en tant qu'admin, avec le bouton « Enregistrer ». La version GitHub affiche le contenu de `data/state.json` en lecture seule.
+
+## Utilisation du plan
 
 - **3D / Plan 2D / Face 2D** : sélecteur en haut à droite.
 - **Visite** : présentation guidée, la caméra se déplace de zone en zone.
-- **Photo** : enregistre l'image de la vue en PNG (sur téléphone, le partage propose « Enregistrer l'image » pour la galerie).
-- **Options** : points de vue, mode soirée, couleur d'ambiance, rideaux latéraux, repérage du matériel, liste du matériel.
+- **Photo** : enregistre l'image de la vue en PNG (sur téléphone, le partage propose « Enregistrer l'image »).
+- **Tactile** : un doigt pour se déplacer, deux doigts pour zoomer et pivoter à 360°.
 - Toucher un appareil ouvre sa fiche : rôle, fonctions, quantité et lien source.
 
 ## À savoir
