@@ -200,7 +200,11 @@ dialog::backdrop{background:rgba(10,10,12,.55);backdrop-filter:blur(3px);}
 .sheet-b{padding:18px;overflow:auto;display:flex;flex-direction:column;gap:16px;}
 .sheet-f{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid var(--line);}
 dialog.lb{background:#000;width:min(1100px,calc(100vw - 16px));}
-dialog.lb img{display:block;width:100%;max-height:80vh;object-fit:contain;}
+dialog.lb img{display:block;width:100%;max-height:80vh;object-fit:contain;transition:transform .12s;touch-action:pan-y;user-select:none;-webkit-user-drag:none;}
+@keyframes slL{from{transform:translateX(50px);opacity:.3;}to{transform:none;opacity:1;}}
+@keyframes slR{from{transform:translateX(-50px);opacity:.3;}to{transform:none;opacity:1;}}
+.swipe-hint{display:none;}
+@media (hover:none){.swipe-hint{display:inline;opacity:.6;}}
 .lb-cap{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;color:#ddd;font-size:13.5px;}
 .lb-cap .btn{background:#222;border-color:#333;color:#fff;}
 
@@ -378,8 +382,16 @@ function detailView(id){const p=state.plans.find(x=>x.id===id&&(owner||x.visible
   ${p.photos.length?`<div class="gallery">${p.photos.map((ph,i)=>`<button data-lb="${esc(p.id)}:${i}" aria-label="Agrandir : ${esc(ph.caption||'photo')}"><img src="${esc(src(ph.src))}" alt="${esc(ph.caption)}" loading="lazy"></button>`).join('')}</div>`:'<div class="feed"><div class="empty">Pas encore de photos pour ce lieu.</div></div>'}`;}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-lb]');if(!b)return;const [id,i]=b.dataset.lb.split(':');lightbox(id,+i);});
 function lightbox(id,i){const p=state.plans.find(x=>x.id===id);const dl=$('#sheet');dl.className='lb';
-  const draw=()=>{const ph=p.photos[i];dl.innerHTML=`<img src="${esc(src(ph.src))}" alt="${esc(ph.caption)}"><div class="lb-cap"><span>${esc(ph.caption||'')} <span class="mono" style="opacity:.6">${i+1}/${p.photos.length}</span></span><span style="display:flex;gap:6px"><button class="btn sm icon" data-n="-1" aria-label="Précédente">${ic('back')}</button><button class="btn sm icon" data-n="1" aria-label="Suivante">${ic('arrow')}</button><button class="btn sm" data-close>Fermer</button></span></div>`;};
-  draw();dl.onclick=e=>{const b=e.target.closest('button');if(e.target===dl||b&&b.hasAttribute('data-close')){dl.close();return;}if(b&&b.dataset.n){i=(i+(+b.dataset.n)+p.photos.length)%p.photos.length;draw();}};dl.showModal();}
+  const draw=()=>{const ph=p.photos[i];dl.innerHTML=`<img src="${esc(src(ph.src))}" alt="${esc(ph.caption)}"><div class="lb-cap"><span>${esc(ph.caption||'')} <span class="mono" style="opacity:.6">${i+1}/${p.photos.length}</span> <span class="swipe-hint">· glisse pour changer</span></span><span style="display:flex;gap:6px"><button class="btn sm icon" data-n="-1" aria-label="Précédente">${ic('back')}</button><button class="btn sm icon" data-n="1" aria-label="Suivante">${ic('arrow')}</button><button class="btn sm" data-close>Fermer</button></span></div>`;};
+  const go=dir=>{i=(i+dir+p.photos.length)%p.photos.length;draw();const im=dl.querySelector('img');if(im)im.style.animation=(dir>0?'slL':'slR')+' .24s ease';};
+  draw();dl.onclick=e=>{const b=e.target.closest('button');if(e.target===dl||b&&b.hasAttribute('data-close')){dl.close();return;}if(b&&b.dataset.n)go(+b.dataset.n);};
+  let sx=null,sy=null;
+  dl.ontouchstart=e=>{if(e.touches.length===1){sx=e.touches[0].clientX;sy=e.touches[0].clientY;}else sx=null;};
+  dl.ontouchmove=e=>{if(sx===null)return;const dx=e.touches[0].clientX-sx,im=dl.querySelector('img');if(im&&Math.abs(dx)>8){im.style.animation='none';im.style.transform=`translateX(${dx*0.6}px)`;im.style.opacity=String(1-Math.min(Math.abs(dx)/600,.4));}};
+  dl.ontouchend=e=>{if(sx===null)return;const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;sx=null;const im=dl.querySelector('img');if(im){im.style.transform='';im.style.opacity='';}
+    if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.2)go(dx<0?1:-1);};
+  dl.onkeydown=e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1);};
+  dl.showModal();}
 
 /* ---------- Studio (propriétaire) ---------- */
 function studioView(){
@@ -406,7 +418,7 @@ function bindStudio(){const v=$('#view');
     else if(b.dataset.vis){const p=state.plans[+b.dataset.vis];p.visible=p.visible===false;dirty=true;route();}
     else if(b.dataset.mv){const [i,s]=b.dataset.mv.split(':').map(Number);const j=i+s;[state.plans[i],state.plans[j]]=[state.plans[j],state.plans[i]];dirty=true;route();}
     else if(b.dataset.delup){state.updates.splice(+b.dataset.delup,1);dirty=true;route();}};}
-function editPlan(orig,isNew){const p=JSON.parse(JSON.stringify(orig));const dl=$('#sheet');dl.className='';
+function editPlan(orig,isNew){const p=JSON.parse(JSON.stringify(orig));const dl=$('#sheet');dl.className='';dl.ontouchstart=dl.ontouchmove=dl.ontouchend=dl.onkeydown=null;
   const F=(k,l,t='text',ph='')=>`<label class="field">${l}<input type="${t}" data-k="${k}" value="${esc(p[k])}" placeholder="${esc(ph)}"></label>`;
   const draw=()=>{dl.innerHTML=`<div class="sheet"><div class="sheet-h"><h3>${isNew?'Nouveau plan':'Modifier le plan'}</h3><button class="btn sm icon quiet" data-close aria-label="Fermer">${ic('x')}</button></div>
     <div class="sheet-b">
