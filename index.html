@@ -223,6 +223,23 @@ dialog.lb img{display:block;width:100%;max-height:80vh;object-fit:contain;transi
 .fade{animation:fd .25s ease both;}
 @keyframes fd{from{opacity:.001;transform:translateY(6px);}to{opacity:1;transform:none;}}
 
+.cmbox{gap:0;padding:6px 0 0;}
+.cm{display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);}
+.cm .av{width:36px;height:36px;border-radius:50%;background:var(--sunken);display:grid;place-items:center;font:700 14px var(--display);color:var(--ink-2);}
+.cm.me .av{background:var(--ink);color:var(--bg);}
+.cm.done{opacity:.6;}
+.cm .ch{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;}
+.cm .ch time{font-size:12px;color:var(--ink-3);margin-left:auto;}
+.cm p{margin:4px 0 0;font-size:14.5px;white-space:pre-wrap;overflow-wrap:anywhere;}
+.cm .ca{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;}
+.cmbox .empty{border-bottom:1px solid var(--line);}
+.cmform{display:flex;gap:10px;align-items:flex-end;padding:14px 18px 18px;}
+.cmform textarea{min-height:76px;}
+.note2{font-size:13.5px;color:var(--ink-2);align-items:center;flex-wrap:wrap;}
+.nbadge{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font:700 11px/20px var(--body);text-align:center;font-style:normal;}
+.tabs .nbadge{position:absolute;margin:0;transform:translate(14px,-4px);}
+.tabs a{position:relative;}
+@media (max-width:900px){.cmform{flex-direction:column;align-items:stretch;}.cm{padding:12px 14px;}.cmform{padding:12px 14px 16px;}}
 /* Motion, profondeur et couches */
 :root{--dur-fast:140ms;--dur-mid:220ms;--dur-panel:320ms;--ease-out:cubic-bezier(.2,.7,.2,1);--z-bar:25;--z-save:30;--z-toast:60;}
 .btn{transition:background var(--dur-fast),border-color var(--dur-fast),transform 100ms,box-shadow var(--dur-mid),filter var(--dur-fast);}
@@ -401,7 +418,7 @@ const chip=p=>{const [l,c]=STATUS[p.status]||STATUS.idea;return `<span class="ch
 /* ---------- Navigation ---------- */
 const ROUTES=[['home','Accueil','home'],['plans','Plans','grid'],['updates','Nouveautés','bell']];
 function nav(){const cur=(location.hash.slice(1)||'home').split('-')[0];const items=ROUTES.concat(owner?[['studio','Studio','studio']]:[]);
-  const link=([r,l,i])=>`<a href="#${r}" ${cur===r||(cur==='plan'&&r==='plans')?'aria-current="page"':''}>${ic(i)}<span>${l}</span></a>`;
+  const link=([r,l,i])=>`<a href="#${r}" ${cur===r||(cur==='plan'&&r==='plans')?'aria-current="page"':''}>${ic(i)}<span>${l}</span>${r==='studio'?`<em class="nbadge" data-badge ${owner&&openCount()?'':'hidden'}>${openCount()}</em>`:''}</a>`;
   $('#sideNav').innerHTML=items.map(link).join('');$('#tabs').innerHTML=items.map(link).join('');
   const lab=owner?'Admin':'Organisateur';['#roleSide','#roleTop'].forEach(s=>{const e=$(s);e.textContent=lab;e.classList.toggle('owner',owner);});}
 function route(){if(!state)return;let h=location.hash.slice(1)||'home';if(h==='studio'&&!owner)h='home';
@@ -477,37 +494,36 @@ async function copyText(t,btn){let ok=false;try{await navigator.clipboard.writeT
 const wa=t=>'https://wa.me/?text='+encodeURIComponent(t);
 const eqText=p=>(p.equipment||[]).map(([n,i,c])=>`- ${n} × ${i}${c?' ('+c+')':''}`).join('\n');
 function detailView(id){const base=detailCore(id);const p=state.plans.find(x=>x.id===id&&(owner||x.visible!==false));if(!p)return base;
-  const L=p.checklist||[],done=L.filter(x=>x.done).length,pc=L.length?Math.round(done/L.length*100):0;
+  const L=p.checklist||[],done=L.filter(x=>eff(p,x).done).length,pc=L.length?Math.round(done/L.length*100):0;
   const cats=[...new Set(L.map(x=>x.c))];
   const quick=`<div class="sect"><h2>Actions</h2></div><div class="quick">
     <button class="qa-btn" id="aShare"><span class="ico">${ic('share')}</span><b>Partager le plan</b><small>Copier le lien direct</small></button>
     <a class="qa-btn" id="aWa" href="${esc(wa(`Plan ${p.name}${p.title?' – '+p.title.trim():''} : ${shareUrl(p.id)}`))}" target="_blank" rel="noopener"><span class="ico">${ic('wa')}</span><b>Envoyer sur WhatsApp</b><small>Le lien du plan, prêt à envoyer</small></a>
     ${(p.equipment||[]).length?`<button class="qa-btn" id="aQuote"><span class="ico">${ic('quote')}</span><b>Demander un devis</b><small>Message prêt pour le loueur</small></button>`:''}
-    ${cm?`<button class="qa-btn" id="aComment"><span class="ico">${ic('chat')}</span><b>Laisser un commentaire</b><small>Visible par DJ RON</small></button>`:''}</div>`;
+    <button class="qa-btn" id="aComments"><span class="ico">${ic('chat')}</span><b>Commentaires</b><small>${comments.filter(c=>c.plan===p.id).length||'Aucun'} message${comments.filter(c=>c.plan===p.id).length>1?'s':''} sur ce plan</small></button></div>`;
   const eq=(p.equipment||[]).length?`<div class="sect"><h2>Matériel en location</h2><span class="mono" style="color:var(--ink-3)">${p.equipment.reduce((a,[n])=>a+(+n||0),0)} éléments</span></div>
     <div class="eq">${p.equipment.map(([n,i,c])=>`<div><span class="n">${esc(n)}×</span><span><b>${esc(i)}</b>${c?`<small>${esc(c)}</small>`:''}</span></div>`).join('')}</div>`:'';
   const ck=L.length||owner?`<div class="sect"><h2>Questions pour le lieu</h2></div>
-    <div class="panelc"><div class="ck-head"><div class="ring" style="--p:${pc}"><span>${pc}%</span></div><div style="flex:1;min-width:180px"><b style="font:700 16px var(--display)">${done} réponse${done>1?'s':''} sur ${L.length}</b><div style="font-size:13px;color:var(--ink-3)">Tout ce qu’il faut confirmer avec le lieu avant le jour J.</div></div>
+    <div class="panelc"><div class="ck-head"><div class="ring" style="--p:${pc}"><span>${pc}%</span></div><div style="flex:1;min-width:180px"><b style="font:700 16px var(--display)">${done} réponse${done>1?'s':''} sur ${L.length}</b><div style="font-size:13px;color:var(--ink-3)">${canCheck()?'Coche et note les réponses : tout s’enregistre tout seul, pour toi et l’organisateur.':'Tout ce qu’il faut confirmer avec le lieu. Pour cocher, ouvre la page Claude connecté.'}</div></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="cCopy">${ic('copy')}Copier les questions</button><a class="btn sm" id="cWa" href="#" target="_blank" rel="noopener">${ic('wa')}WhatsApp</a></div></div>
-    <div>${cats.map(c=>{const it=L.map((x,i)=>[x,i]).filter(([x])=>x.c===c),d=it.filter(([x])=>x.done).length;
+    <div>${cats.map(c=>{const it=L.map((x,i)=>[x,i]).filter(([x])=>x.c===c),d=it.filter(([x])=>eff(p,x).done).length;
       return `<details class="cat"><summary><span>${esc(c)}</span><span class="r"><span class="mono" style="color:var(--ink-3)">${d}/${it.length}</span><span class="mini"><i style="width:${it.length?d/it.length*100:0}%"></i></span>${ic('chev')}</span></summary>
-      ${it.map(([x,i])=>`<div class="q${x.done?' ok':''}">${owner?`<label class="qc"><input type="checkbox" data-qd="${i}" ${x.done?'checked':''} aria-label="Réglé"><span>${esc(x.q)}</span></label><input class="qa" data-qa="${i}" value="${esc(x.a)}" placeholder="Réponse du lieu" aria-label="Réponse">`
-        :`<div class="qc"><span class="tick">${x.done?ic('check'):''}</span><span>${esc(x.q)}</span></div>${x.a?`<div class="ans">${esc(x.a)}</div>`:''}`}</div>`).join('')}</details>`;}).join('')||'<div class="empty">Aucune question pour l’instant.</div>'}</div>
+      ${it.map(([x,i])=>{const e=eff(p,x);return `<div class="q${e.done?' ok':''}" data-ck="${ckey(p,x)}">${canCheck()?`<label class="qc"><input type="checkbox" data-qd="${i}" ${e.done?'checked':''} aria-label="Réglé"><span>${esc(x.q)}</span></label><input class="qa" data-qa="${i}" value="${esc(e.a)}" placeholder="Réponse du lieu" aria-label="Réponse">`
+        :`<div class="qc"><span class="tick">${e.done?ic('check'):''}</span><span>${esc(x.q)}</span></div><div class="ans"${e.a?'':' hidden'}>${esc(e.a)}</div>`}</div>`;}).join('')}</details>`;}).join('')||'<div class="empty">Aucune question pour l’instant.</div>'}</div>
     ${owner?`<div class="addq"><select id="nqCat" aria-label="Catégorie">${(cats.length?cats:['Général']).map(c=>`<option>${esc(c)}</option>`).join('')}</select><input id="nqText" placeholder="Ajouter une question" aria-label="Nouvelle question"><button class="btn" id="nqAdd">${ic('plus')}Ajouter</button></div>`:''}</div>`:'';
-  return base.replace('<div class="sect"><h2>Photos du lieu</h2>',quick+eq+ck+'<div class="sect"><h2>Photos du lieu</h2>');}
-const questionsText=p=>{const L=(p.checklist||[]).filter(x=>!x.done);const cats=[...new Set(L.map(x=>x.c))];
+  return base.replace('<div class="sect"><h2>Photos du lieu</h2>',quick+`<div id="cmts" data-plan="${esc(p.id)}">${commentsHTML(p.id)}</div>`+eq+ck+'<div class="sect"><h2>Photos du lieu</h2>');}
+const questionsText=p=>{const L=(p.checklist||[]).filter(x=>!eff(p,x).done);const cats=[...new Set(L.map(x=>x.c))];
   return `Bonjour,\n\nPour la soirée ${p.name}${p.date?' du '+fmt(p.date):''}${p.venue?' ('+p.venue+')':''}, voici les points techniques à confirmer :\n\n`+cats.map(c=>c+'\n'+L.filter(x=>x.c===c).map(x=>'- '+x.q).join('\n')).join('\n\n')+'\n\nMerci beaucoup,\nDJ RON';};
 function bindDetail(id){const p=state.plans.find(x=>x.id===id);if(!p)return;const v=$('#view');
   const cwa=$('#cWa');if(cwa)cwa.href=wa(questionsText(p));
   $('#aShare')?.addEventListener('click',e=>copyText(shareUrl(p.id),null).then(ok=>{if(ok)toast('Lien du plan copié');}));
   $('#cCopy')?.addEventListener('click',e=>copyText(questionsText(p),e.currentTarget));
   $('#aQuote')?.addEventListener('click',()=>quoteSheet(p));
-  $('#aComment')?.addEventListener('click',async()=>{try{const r=await cm.openComposer({element:document.querySelector('.detail')||v});if(r&&r.opened===false)toast('Clique dans la page puis réessaie');}catch(e){toast('Commentaires indisponibles ici');}});
   $('#nqAdd')?.addEventListener('click',()=>{const t=$('#nqText').value.trim();if(!t){$('#nqText').focus();return;}p.checklist.push({c:$('#nqCat').value,q:t,done:false,a:''});setDirty();const open=[...document.querySelectorAll('.cat[open] summary span:first-child')].map(s=>s.textContent);route();reopen(open);toast('Question ajoutée');});
-  v.onchange=e=>{const t=e.target;if(t.dataset.qd!==undefined){const q=p.checklist[+t.dataset.qd];q.done=t.checked;t.closest('.q').classList.toggle('ok',t.checked);setDirty();refreshCk(p);}};
-  v.oninput=e=>{const t=e.target;if(t.dataset.qa!==undefined){p.checklist[+t.dataset.qa].a=t.value;setDirty();}};}
+  v.onchange=e=>{const t=e.target;if(t.dataset.qd!==undefined){saveCheck(p,p.checklist[+t.dataset.qd],{done:t.checked});t.closest('.q').classList.toggle('ok',t.checked);refreshCk(p);}};
+  v.oninput=e=>{const t=e.target;if(t.dataset.qa!==undefined)debounceCheck(p,p.checklist[+t.dataset.qa],t.value);};}
 function reopen(names){document.querySelectorAll('.cat').forEach(d=>{if(names.includes(d.querySelector('summary span').textContent))d.open=true;});}
-function refreshCk(p){const L=p.checklist,done=L.filter(x=>x.done).length,pc=L.length?Math.round(done/L.length*100):0;const r=document.querySelector('.ring');if(r){r.style.setProperty('--p',pc);r.querySelector('span').textContent=pc+'%';r.nextElementSibling.querySelector('b').textContent=`${done} réponse${done>1?'s':''} sur ${L.length}`;}
+function refreshCk(p){const L=p.checklist,done=L.filter(x=>eff(p,x).done).length,pc=L.length?Math.round(done/L.length*100):0;const r=document.querySelector('.ring');if(r){r.style.setProperty('--p',pc);r.querySelector('span').textContent=pc+'%';r.nextElementSibling.querySelector('b').textContent=`${done} réponse${done>1?'s':''} sur ${L.length}`;}
   document.querySelectorAll('.cat').forEach(d=>{const qs=d.querySelectorAll('.q'),ok=d.querySelectorAll('.q.ok').length;d.querySelector('summary .mono').textContent=ok+'/'+qs.length;d.querySelector('.mini i').style.width=(qs.length?ok/qs.length*100:0)+'%';});
   const cwa=$('#cWa');if(cwa)cwa.href=wa(questionsText(p));}
 function quoteSheet(p){const dl=$('#sheet');dl.className='';dl.ontouchstart=dl.ontouchmove=dl.ontouchend=dl.onkeydown=dl.oninput=dl.onchange=dl.ondrop=dl.ondragover=dl.ondragleave=null;
@@ -527,6 +543,61 @@ document.addEventListener('click',async e=>{const b=e.target.closest('.install')
 if(onWeb){if(/iphone|ipad/i.test(navigator.userAgent)&&!navigator.standalone)document.querySelectorAll('.install').forEach(b=>b.classList.add('show'));
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});}
 
+/* ---------- Commentaires (organisateur ↔ DJ RON) ---------- */
+let db=null,usr=null,myId=null,comments=[],cmReady=false,cmErr=null,canWrite=null,people={};
+const relTime=iso=>{const d=new Date(iso),m=Math.round((Date.now()-d)/6e4);if(m<1)return 'à l’instant';if(m<60)return `il y a ${m} min`;const h=Math.round(m/60);if(h<24)return `il y a ${h} h`;return d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})+' à '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});};
+const who=c=>c.admin?'DJ RON':((people[c.author]&&people[c.author].name)||'Organisateur');
+const openCount=()=>comments.filter(c=>!c.resolved&&!c.admin).length;
+function commentsHTML(pid){const L=comments.filter(c=>c.plan===pid).sort((a,b)=>a.createdAt.localeCompare(b.createdAt));
+  let list;if(cmErr)list=`<div class="empty">Les commentaires ne sont pas joignables pour l’instant.</div>`;
+  else if(!db)list=`<div class="empty">Les commentaires de l’application demandent d’être connecté à Claude.</div>`;
+  else if(!cmReady)list=`<div class="empty">Chargement des commentaires…</div>`;
+  else list=L.length?L.map(c=>`<div class="cm${c.admin?' me':''}${c.resolved?' done':''}"><div class="av">${esc(who(c).slice(0,1).toUpperCase())}</div><div class="cb">
+    <div class="ch"><b>${esc(who(c))}</b>${c.admin?'<span class="chip c-ready" style="height:20px">Admin</span>':''}${c.resolved?'<span class="chip c-idea" style="height:20px">Traité</span>':''}<time>${esc(relTime(c.createdAt))}</time></div>
+    <p>${esc(c.text)}</p>${owner||c.author===myId?`<div class="ca">${owner&&!c.admin?`<button class="btn sm quiet" data-cres="${esc(c.id)}">${ic('check')}${c.resolved?'Rouvrir':'Marquer comme traité'}</button>`:''}<button class="btn sm quiet danger" data-cdel="${esc(c.id)}">${ic('trash')}Supprimer</button></div>`:''}</div></div>`).join('')
+    :`<div class="empty">Aucun commentaire pour l’instant. ${owner?'Les remarques de l’organisateur apparaîtront ici.':'Une question, une idée de changement ? Écris-la ici.'}</div>`;
+  const canPost=db&&!cmErr&&canWrite!==false;
+  const composer=canPost?`<div class="cmform"><label class="field" style="flex:1">Ton commentaire<textarea id="cmText" placeholder="${owner?'Répondre à l’organisateur…':'Ex. : on peut décaler le bar 2 vers l’escalier ?'}" rows="3"></textarea></label><button class="btn primary" id="cmSend">${ic('chat')}Envoyer</button></div>`
+    :`<div class="cmform note2">${db?'Ton accès à cette page ne permet pas d’écrire ici.':'Pour écrire ici, ouvre la page connecté à Claude.'}${cm?` <button class="btn sm" id="cmClaude">${ic('chat')}Commenter avec Claude</button>`:''}</div>`;
+  return `<div class="sect"><h2>Commentaires</h2>${L.length?`<span class="mono" style="color:var(--ink-3)">${L.length}</span>`:''}</div><div class="panelc cmbox">${list}${composer}</div>`;}
+function refreshComments(){const box=$('#cmts');if(box){const keep=$('#cmText')?.value||'';box.innerHTML=commentsHTML(box.dataset.plan);const t=$('#cmText');if(t&&keep)t.value=keep;}
+  const n=openCount();document.querySelectorAll('[data-badge]').forEach(b=>{b.textContent=n;b.hidden=!(owner&&n);});
+  const sc=$('#studioCm');if(sc)sc.innerHTML=studioCmHTML();}
+function studioCmHTML(){if(!db)return '<div class="empty">Commentaires indisponibles dans cette vue.</div>';
+  const L=comments.filter(c=>!c.admin).slice(0,8);return L.length?L.map(c=>{const p=state.plans.find(x=>x.id===c.plan);
+    return `<a class="it" href="#plan-${esc(c.plan)}" style="text-decoration:none;color:inherit;grid-template-columns:40px minmax(0,1fr) auto"><div class="dotic">${ic('chat')}</div><div><div class="t">${esc(c.text)}</div><div class="meta">${esc(who(c))} · ${p?esc(p.name)+' · ':''}${esc(relTime(c.createdAt))}</div></div>${c.resolved?'<span class="chip c-idea">Traité</span>':'<span class="chip c-wip">Nouveau</span>'}</a>`;}).join(''):'<div class="empty">Aucun commentaire reçu.</div>';}
+async function loadPeople(){if(!usr)return;const ids=[...new Set(comments.map(c=>c.author).filter(Boolean))].filter(i=>!people[i]);if(!ids.length)return;
+  try{Object.assign(people,await usr.profiles(ids));refreshComments();}catch(e){}}
+document.addEventListener('click',async e=>{const b=e.target.closest('#cmSend,#cmClaude,[data-cres],[data-cdel],#aComments');if(!b)return;
+  if(b.id==='aComments'){$('#cmts')?.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>$('#cmText')?.focus(),400);return;}
+  if(b.id==='cmClaude'){try{await cm.openComposer({element:$('#cmts')});}catch(_){toast('Commentaires indisponibles ici');}return;}
+  if(b.id==='cmSend'){const t=$('#cmText').value.trim();if(!t){$('#cmText').focus();toast('Écris ton commentaire');return;}
+    b.classList.add('is-loading');b.disabled=true;
+    try{await db.collection('comments').doc().set({plan:$('#cmts').dataset.plan,text:t.slice(0,2000),author:myId||'',admin:!!owner,createdAt:new Date().toISOString(),resolved:false});$('#cmText').value='';toast('Commentaire envoyé');}
+    catch(err){toast(err&&err.code==='permission_denied'?'Ton accès ne permet pas d’écrire ici':'Envoi impossible, réessaie');}
+    b.classList.remove('is-loading');b.disabled=false;return;}
+  if(b.dataset.cres){const c=comments.find(x=>x.id===b.dataset.cres);if(!c)return;try{await db.collection('comments').doc(c.id).update({resolved:!c.resolved});}catch(_){toast('Modification impossible');}return;}
+  if(b.dataset.cdel){if(!b.dataset.sure){b.dataset.sure='1';b.innerHTML=ic('trash')+'Confirmer';setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.innerHTML=ic('trash')+'Supprimer';}},3500);return;}
+    try{await db.collection('comments').doc(b.dataset.cdel).delete();toast('Commentaire supprimé');}catch(_){toast('Suppression impossible');}}});
+function startComments(){if(!db)return;const timer=setTimeout(()=>{if(!cmReady){cmErr='unreachable';refreshComments();}},10000);
+  db.collection('comments').orderBy('createdAt','desc').limit(500).onSnapshot(s=>{if(!s.fromCache){clearTimeout(timer);cmErr=null;}comments=s.docs.filter(d=>d.exists).map(d=>({id:d.id,...d.data()}));cmReady=true;refreshComments();loadPeople();},
+    e=>{clearTimeout(timer);cmErr=e&&e.code||'error';refreshComments();});}
+
+/* ---------- Questions : coches et réponses partagées, enregistrées tout de suite ---------- */
+let checks={};const ckT={};
+const ckey=(p,x)=>p.id+'__'+[...x.q].reduce((h,c)=>(h*31+c.charCodeAt(0))>>>0,7).toString(36);
+const eff=(p,x)=>{const c=checks[ckey(p,x)];return c?{done:!!c.done,a:c.a||''}:{done:!!x.done,a:x.a||''};};
+const canCheck=()=>!!(db&&canWrite!==false);
+async function saveCheck(p,x,patch){const k=ckey(p,x),cur=eff(p,x),data={plan:p.id,q:x.q,done:cur.done,a:cur.a,...patch,by:myId||'',at:new Date().toISOString()};checks[k]=data;
+  try{await db.collection('checks').doc(k).set(data);}catch(e){toast(e&&e.code==='permission_denied'?'Ton accès ne permet pas de cocher ici':'Enregistrement impossible, réessaie');}}
+function debounceCheck(p,x,val){const k=ckey(p,x);checks[k]={...eff(p,x),plan:p.id,q:x.q,a:val};clearTimeout(ckT[k]);ckT[k]=setTimeout(()=>saveCheck(p,x,{a:val}),700);}
+function applyChecks(){document.querySelectorAll('.q[data-ck]').forEach(el=>{const c=checks[el.dataset.ck];if(!c)return;el.classList.toggle('ok',!!c.done);
+  const cb=el.querySelector('input[type=checkbox]');if(cb)cb.checked=!!c.done;const qa=el.querySelector('.qa');if(qa&&document.activeElement!==qa)qa.value=c.a||'';
+  const tk=el.querySelector('.tick');if(tk)tk.innerHTML=c.done?ic('check'):'';const an=el.querySelector('.ans');if(an){an.textContent=c.a||'';an.hidden=!c.a;}});
+  const pid=$('#cmts')?.dataset.plan,p=pid&&state.plans.find(x=>x.id===pid);if(p)refreshCk(p);}
+function startChecks(){if(!db)return;db.collection('checks').limit(1000).onSnapshot(s=>{const n={};s.docs.forEach(d=>{if(d.exists)n[d.id]=d.data();});
+  Object.keys(ckT).forEach(k=>{if(checks[k])n[k]={...n[k],a:checks[k].a};});checks=n;applyChecks();},()=>{});}
+
 /* ---------- Studio (propriétaire) ---------- */
 function studioView(){
   return `<div class="pagehead"><div><h1>Studio</h1><p>Tes plans, tes photos et les nouveautés. Visible par toi seul.</p></div><button class="btn primary" id="newPlan">${ic('plus')}Nouveau plan</button></div>
@@ -535,7 +606,8 @@ function studioView(){
     <div style="min-width:0"><b>${esc(p.name||'Sans nom')}</b><div class="m">${chip(p)}<span>${p.visible!==false?'Visible':'Masqué'} pour l’organisateur</span>${p.photos.length?`<span>${p.photos.length} photo${p.photos.length>1?'s':''}</span>`:''}</div></div>
     <div class="a"><button class="btn sm icon quiet" data-mv="${i}:-1" ${i===0?'disabled':''} aria-label="Monter">${ic('up')}</button><button class="btn sm icon quiet" data-mv="${i}:1" ${i===state.plans.length-1?'disabled':''} aria-label="Descendre">${ic('down')}</button>
     <button class="btn sm icon quiet" data-vis="${i}" aria-label="${p.visible!==false?'Masquer':'Afficher'} pour l’organisateur">${ic(p.visible!==false?'eye':'eyeoff')}</button><button class="btn sm" data-edit="${i}">${ic('edit')}Modifier</button></div></div>`).join('')}</div></section>
-  <section><div class="sect" style="margin-top:0"><h2>Nouveauté</h2></div><div class="panelc">
+  <section><div class="sect" style="margin-top:0"><h2>Commentaires reçus</h2></div><div class="feed" id="studioCm" style="margin-bottom:22px">${studioCmHTML()}</div>
+  <div class="sect"><h2>Nouveauté</h2></div><div class="panelc">
     <label class="field">Plan concerné<select id="uPlan"><option value="">Général</option>${state.plans.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select></label>
     <label class="field">Texte<textarea id="uText" placeholder="Ex. : plan Péniche, première implantation des enceintes"></textarea></label>
     <button class="btn dark" id="uAdd">${ic('plus')}Ajouter aux nouveautés</button></div>
@@ -602,8 +674,10 @@ addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='
 fetch('data/state.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();}).then(s=>{state=s;s.plans.forEach(p=>{p.photos=p.photos||[];p.specs=p.specs||[];p.checklist=p.checklist||[];p.equipment=p.equipment||[];});nav();route();})
   .catch(()=>{$('#view').innerHTML='<div class="empty">Les plans n’ont pas pu être chargés. Recharge la page.</div>';});
 (async()=>{if(!(window.claude&&typeof window.claude.use==='function'))return;
-  const [a,u,c]=await Promise.all([window.claude.use('artifact').catch(()=>null),window.claude.use('user').catch(()=>null),window.claude.use('comments').catch(()=>null)]);
-  art=a;cm=c;owner=!!(u&&await u.isOwner().catch(()=>false));if(state&&(owner||cm)){nav();route();}})();
+  const [a,u,c,d]=await Promise.all([window.claude.use('artifact').catch(()=>null),window.claude.use('user').catch(()=>null),window.claude.use('comments').catch(()=>null),window.claude.use('db').catch(()=>null)]);
+  art=a;cm=c;db=d;usr=u;owner=!!(u&&await u.isOwner().catch(()=>false));
+  if(u){try{myId=await u.id();}catch(_){}try{canWrite=await u.can('data.write');}catch(_){}}
+  startComments();startChecks();if(state){nav();route();}})();
 </script>
 
 </body>
