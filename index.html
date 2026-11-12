@@ -81,6 +81,18 @@ svg.i{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-widt
 .side-foot b{font:700 14px var(--display);color:var(--ink);}
 .role{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:999px;background:var(--sunken);color:var(--ink-2);}
 .role.owner{background:var(--accent-soft);color:var(--accent);}
+button.role{border:0;cursor:pointer;font-family:inherit;transition:background var(--dur,160ms),color var(--dur,160ms);}
+button.role:hover{background:var(--line);color:var(--ink);}
+button.role.owner:hover{background:var(--accent-soft);filter:brightness(1.08);}
+.adm-note{margin:0;color:var(--ink-2);font-size:13.5px;line-height:1.5;}
+.adm-note.small{font-size:12px;color:var(--ink-3);}
+.adm-err{margin:0;padding:10px 12px;border-radius:10px;background:#ff5d5d1a;color:#e5484d;font-size:13px;font-weight:600;}
+.adm-who{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:12px;background:var(--accent-soft);color:var(--accent);}
+.adm-who div{display:flex;flex-direction:column;}.adm-who b{color:var(--ink);}.adm-who span{color:var(--ink-2);font-size:13px;word-break:break-all;}
+.adm-more{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:10px;}
+.adm-more[open]{display:flex;}.adm-more summary{cursor:pointer;font-weight:600;font-size:13.5px;}
+.adm-more ol{margin:6px 0 0;padding-left:20px;display:grid;gap:4px;font-size:13px;color:var(--ink-2);}
+.adm-more a{color:var(--accent);font-weight:600;}
 
 .content{min-width:0;padding:28px clamp(16px,4vw,44px) 120px;max-width:1180px;width:100%;}
 .appbar{display:none;}
@@ -340,12 +352,12 @@ dialog.lb img{display:block;width:100%;max-height:80vh;object-fit:contain;transi
     <div class="logo"><div class="mk">RON</div><div><b>DJ RON</b><small>Plans d'implantation</small></div></div>
     <nav class="nav" id="sideNav"></nav>
     <button class="btn sm install">Installer l’application</button>
-    <div class="side-foot"><span>Fait par</span><b>DJ RON</b><span id="roleSide" class="role" style="margin-top:8px;align-self:flex-start">Organisateur</span></div>
+    <div class="side-foot"><span>Fait par</span><b>DJ RON</b><button type="button" id="roleSide" class="role" style="margin-top:8px;align-self:flex-start">Organisateur</button></div>
   </aside>
   <div>
     <header class="appbar">
       <div class="logo"><div class="mk">RON</div><div><b>DJ RON</b></div></div>
-      <span style="display:flex;gap:8px;align-items:center"><button class="btn sm install" aria-label="Installer l’application">Installer</button><span id="roleTop" class="role">Organisateur</span></span>
+      <span style="display:flex;gap:8px;align-items:center"><button class="btn sm install" aria-label="Installer l’application">Installer</button><button type="button" id="roleTop" class="role">Organisateur</button></span>
     </header>
     <main class="content" id="view">
       <div class="skel" style="height:44px;width:260px;margin-bottom:22px"></div>
@@ -422,7 +434,7 @@ const ROUTES=[['home','Accueil','home'],['plans','Plans','grid'],['updates','Nou
 function nav(){const cur=(location.hash.slice(1)||'home').split('-')[0];const items=ROUTES.concat(owner?[['studio','Studio','studio']]:[]);
   const link=([r,l,i])=>`<a href="#${r}" ${cur===r||(cur==='plan'&&r==='plans')?'aria-current="page"':''}>${ic(i)}<span>${l}</span>${r==='studio'?`<em class="nbadge" data-badge ${owner&&openCount()?'':'hidden'}>${openCount()}</em>`:''}</a>`;
   $('#sideNav').innerHTML=items.map(link).join('');$('#tabs').innerHTML=items.map(link).join('');
-  const lab=owner?'Admin':'Organisateur';['#roleSide','#roleTop'].forEach(s=>{const e=$(s);e.textContent=lab;e.classList.toggle('owner',owner);});}
+  const onCl=!!(window.claude&&typeof window.claude.use==='function'),lab=owner?'Admin':onCl?'Organisateur':'Connexion admin';['#roleSide','#roleTop'].forEach(s=>{const e=$(s);e.textContent=lab;e.classList.toggle('owner',owner);e.title=owner?(ghToken?'Compte admin':'Admin'):'Se connecter en admin';});}
 function route(){if(!state)return;let h=location.hash.slice(1)||'home';if(h==='studio'&&!owner)h='home';
   const v=$('#view');v.className='content fade';void v.offsetWidth;
   if(h.startsWith('plan-'))v.innerHTML=detailView(h.slice(5));else v.innerHTML=({home:homeView,plans:plansView,updates:updatesView,studio:studioView}[h]||homeView)();
@@ -661,23 +673,99 @@ function editPlan(orig,isNew){const p=JSON.parse(JSON.stringify(orig));const dl=
 async function shrink(file){const bmp=await createImageBitmap(file);const k=Math.min(1,1600/Math.max(bmp.width,bmp.height));
   const c=document.createElement('canvas');c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
   return await new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error('blob')),'image/jpeg',0.84));}
-async function save(){const b=$('#save');if(!art||!owner){toast('Enregistrement réservé à l’admin, sur la page Claude');return;}
+async function save(){const b=$('#save');if(!owner||(!art&&!ghToken)){toast('Connecte-toi en admin pour enregistrer');return;}
   b.disabled=true;b.classList.add('is-loading');b.textContent='Enregistrement…';
   const used=new Set(state.plans.flatMap(p=>p.photos.map(x=>x.src)));
   state.version=(state.version||0)+1;state.savedAt=new Date().toISOString();
   const files={'data/state.json':{content:JSON.stringify(state,null,1),contentType:'application/json'}};
   for(const [path,blob] of pending)if(used.has(path))files[path]=blob;
-  try{await art.publish(files);pending.clear();dirty=false;b.classList.remove('is-loading');b.classList.add('is-done');b.innerHTML=ic('check')+'Enregistré';setTimeout(()=>ensureSave(),1200);toast('Enregistré : l’organisateur voit la nouvelle version');}
+  const viaGh=!!ghToken;
+  try{if(viaGh){const gf={};for(const [k,v] of Object.entries(files))gf[k]=k.endsWith('.json')?v.content:v;await ghCommit(gf,'Mise à jour des plans depuis le Studio');}else await art.publish(files);
+    pending.clear();dirty=false;b.classList.remove('is-loading');b.classList.add('is-done');b.innerHTML=ic('check')+'Enregistré';setTimeout(()=>ensureSave(),1200);toast(viaGh?'Enregistré sur GitHub : visible pour l’organisateur d’ici 1 à 2 minutes':'Enregistré : l’organisateur voit la nouvelle version');}
   catch(err){const c=err&&err.code;b.disabled=false;b.classList.remove('is-loading');b.innerHTML=ic('check')+'Enregistrer les modifications';
+    if(viaGh){if(err.status===401){toast('Session admin expirée : reconnecte-toi, tes modifications restent à l’écran');ghToken=null;owner=false;try{localStorage.removeItem(GH_KEY);}catch(_){}nav();adminDialog();return;}toast(ghErr(err));return;}
     toast(c==='conflict'?'Une autre version a été enregistrée, la page va se recharger':c==='capability_disabled'?'Enregistrement indisponible dans cette vue':c==='not_writer'||c==='not_granted'?'Pas de droits d’enregistrement ici':'Échec de l’enregistrement ('+(c||'erreur')+')');}}
 addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
 
+/* ---------- Accès admin hors Claude (site GitHub) : email + mot de passe ----------
+   Le mot de passe déchiffre (PBKDF2 + AES-GCM, dans le navigateur) un jeton GitHub rangé chiffré dans data/admin.json.
+   Sans le mot de passe, personne ne peut enregistrer : le jeton n'est jamais stocké en clair dans le dépôt. */
+const GH={owner:'Ronezy12',repo:'plan-LEHAYIM',branch:'main'};let ghToken=null,ghEmail='';
+const GH_KEY='djron-admin';
+const u8b64=u=>{let s='';for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s);};
+const b64u8=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function kdf(pw,salt,iter){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:iter,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);}
+async function seal(obj,pw){const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),iter=310000,key=await kdf(pw,salt,iter);
+  const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(obj))));return {v:1,kdf:'PBKDF2-SHA256',iter,salt:u8b64(salt),iv:u8b64(iv),ct:u8b64(ct)};}
+async function unseal(box,pw){const key=await kdf(pw,b64u8(box.salt),box.iter);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64u8(box.iv)},key,b64u8(box.ct));return JSON.parse(new TextDecoder().decode(pt));}
+async function gh(path,opt={}){const r=await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}${path}`,{...opt,headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',Authorization:'Bearer '+ghToken,...(opt.body?{'Content-Type':'application/json'}:{}),...(opt.headers||{})}});
+  if(!r.ok){const e=new Error('github '+r.status);e.status=r.status;try{e.msg=(await r.json()).message;}catch(_){}throw e;}return r.status===204?null:(opt.raw?r.text():r.json());}
+const blobB64=b=>new Promise((res,rej)=>{const f=new FileReader();f.onload=()=>res(String(f.result).split(',')[1]);f.onerror=rej;f.readAsDataURL(b);});
+async function ghCommit(files,msg){for(let tries=0;;tries++){try{
+  const ref=await gh('/git/ref/heads/'+GH.branch),base=ref.object.sha,bc=await gh('/git/commits/'+base),tree=[];
+  for(const [path,data] of Object.entries(files)){const content=typeof data==='string'?u8b64(new TextEncoder().encode(data)):await blobB64(data);const bl=await gh('/git/blobs',{method:'POST',body:JSON.stringify({content,encoding:'base64'})});tree.push({path,mode:'100644',type:'blob',sha:bl.sha});}
+  const t=await gh('/git/trees',{method:'POST',body:JSON.stringify({base_tree:bc.tree.sha,tree})}),c=await gh('/git/commits',{method:'POST',body:JSON.stringify({message:msg,tree:t.sha,parents:[base]})});
+  await gh('/git/refs/heads/'+GH.branch,{method:'PATCH',body:JSON.stringify({sha:c.sha})});return c.sha;}catch(e){if(tries<1&&(e.status===409||e.status===422))continue;throw e;}}}
+/* Lit data/admin.json : d'abord par l'API GitHub (toujours à jour), sinon depuis le site */
+async function ghAdminBox(){try{const r=await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/data/admin.json?ref=${GH.branch}&t=${Date.now()}`,{headers:{Accept:'application/vnd.github.raw'},cache:'no-store'});if(r.ok)return await r.json();if(r.status!==404&&r.status!==403)throw 0;if(r.status===404)return null;}catch(_){}
+  const r2=await fetch('data/admin.json?'+Date.now(),{cache:'no-store'});if(r2.status===404)return null;if(!r2.ok)throw new Error(r2.status);return r2.json();}
+function ghStore(keep){try{localStorage.setItem(GH_KEY,JSON.stringify({t:ghToken,e:ghEmail,exp:Date.now()+(keep?30*864e5:12*36e5)}));}catch(_){}}
+function ghRestore(){try{const s=JSON.parse(localStorage.getItem(GH_KEY)||'null');if(s&&s.t&&s.exp>Date.now()){ghToken=s.t;ghEmail=s.e||'';return true;}localStorage.removeItem(GH_KEY);}catch(_){}return false;}
+function ghLogout(){ghToken=null;ghEmail='';try{localStorage.removeItem(GH_KEY);}catch(_){}owner=false;dirty=false;$('#savebar')?.remove();if((location.hash||'').startsWith('#studio'))location.hash='home';nav();route();toast('Déconnecté');}
+async function ghFresh(){if(!ghToken||dirty)return;try{const s=JSON.parse(await gh('/contents/data/state.json?ref='+GH.branch,{raw:true,headers:{Accept:'application/vnd.github.raw'}}));
+  s.plans.forEach(p=>{p.photos=p.photos||[];p.specs=p.specs||[];p.checklist=p.checklist||[];p.equipment=p.equipment||[];});state=s;nav();route();}catch(e){if(e.status===401){ghLogout();toast('Session admin expirée, reconnecte-toi');}}}
+function ghErr(e){return e.status===401?'Jeton GitHub refusé ou expiré':e.status===403||e.status===404?'Le jeton n’a pas le droit d’écrire dans le dépôt plan-LEHAYIM (Contents : Read and write)':e.name==='OperationError'?'Email ou mot de passe incorrect':'Problème de connexion ('+(e.status||e.message||'erreur')+')';}
+
+function adminDialog(){const dl=$('#sheet');dl.className='';dl.ontouchstart=dl.ontouchmove=dl.ontouchend=dl.onkeydown=dl.oninput=dl.onchange=dl.ondragover=dl.ondragleave=dl.ondrop=null;
+  if(!window.isSecureContext||!crypto.subtle){toast('Connexion admin indisponible ici : ouvre le site en https');return;}
+  const shell=(t,b,f)=>`<div class="sheet" style="max-width:460px"><div class="sheet-h"><h3>${t}</h3><button class="btn sm icon quiet" data-close aria-label="Fermer">${ic('x')}</button></div><div class="sheet-b">${b}</div><div class="sheet-f">${f}</div></div>`;
+  const msg='<p class="adm-err" role="alert" hidden></p>';
+  const fail=t=>{const e=dl.querySelector('.adm-err');e.textContent=t;e.hidden=false;const b=dl.querySelector('[data-go]');if(b){b.disabled=false;b.classList.remove('is-loading');}};
+  const busy=()=>{const b=dl.querySelector('[data-go]');b.disabled=true;b.classList.add('is-loading');dl.querySelector('.adm-err').hidden=true;};
+  const val=k=>(dl.querySelector(`[name="${k}"]`)||{}).value||'';
+  let mode='login';
+  const draw=()=>{
+    if(owner&&ghToken){mode='account';dl.innerHTML=shell('Compte admin',`<div class="adm-who">${ic('check')}<div><b>Connecté en admin</b><span>${esc(ghEmail)}</span></div></div>
+      <p class="adm-note">Tes modifications du Studio s’enregistrent directement sur GitHub. Elles sont visibles par l’organisateur une à deux minutes après.</p>
+      <details class="adm-more"><summary>Changer le mot de passe</summary><label class="field">Nouveau mot de passe<input type="password" name="np" autocomplete="new-password" minlength="10"></label><label class="field">Confirmer<input type="password" name="np2" autocomplete="new-password"></label><button class="btn" data-chpw>${ic('check')}Changer le mot de passe</button></details>${msg}`,
+      `<button class="btn quiet danger" data-out>Se déconnecter</button><button class="btn primary" data-close>Fermer</button>`);return;}
+    if(mode==='setup'){dl.innerHTML=shell('Créer ton accès admin',`<p class="adm-note">Première fois : choisis ton email et un mot de passe, puis colle un jeton GitHub. Le jeton est chiffré avec ton mot de passe avant d’être rangé dans le dépôt : sans le mot de passe, il est illisible.</p>
+      <label class="field">Email<input type="email" name="em" autocomplete="username" inputmode="email" placeholder="ton@email.fr"></label>
+      <label class="field">Mot de passe <small>10 caractères minimum, évite un mot de passe que tu utilises ailleurs</small><input type="password" name="pw" autocomplete="new-password" minlength="10"></label>
+      <label class="field">Confirmer le mot de passe<input type="password" name="pw2" autocomplete="new-password"></label>
+      <label class="field">Jeton GitHub<input type="password" name="tk" autocomplete="off" placeholder="github_pat_…" spellcheck="false"></label>
+      <details class="adm-more" open><summary>Comment créer le jeton (2 minutes)</summary><ol><li>Ouvre <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com › Settings › Fine-grained tokens</a>.</li><li>Nom : « Plans DJ RON », expiration : 1 an.</li><li>Repository access : <b>Only select repositories</b> › <b>plan-LEHAYIM</b>.</li><li>Permissions › Repository › <b>Contents : Read and write</b>.</li><li>Generate token, puis colle-le ici.</li></ol></details>${msg}`,
+      `<button class="btn quiet" data-close>Annuler</button><button class="btn primary" data-go>${ic('check')}Créer mon accès</button>`);return;}
+    dl.innerHTML=shell('Connexion admin',`<p class="adm-note">Réservé à DJ RON. L’organisateur n’a pas besoin de se connecter.</p>
+      <label class="field">Email<input type="email" name="em" autocomplete="username" inputmode="email" placeholder="ton@email.fr"></label>
+      <label class="field">Mot de passe<input type="password" name="pw" autocomplete="current-password"></label>
+      <label class="switch">Rester connecté sur cet appareil<input type="checkbox" name="keep" checked></label>${msg}
+      <p class="adm-note small">Mot de passe oublié ? Supprime le fichier data/admin.json dans le dépôt GitHub, puis recrée ton accès ici.</p>`,
+      `<button class="btn quiet" data-close>Annuler</button><button class="btn primary" data-go>${ic('check')}Se connecter</button>`);};
+  const done=(keep)=>{owner=true;ghStore(keep);dl.close();nav();location.hash='studio';route();toast('Connecté en admin');ghFresh();};
+  const go=async()=>{const em=val('em').trim().toLowerCase(),pw=val('pw');
+    if(mode==='login'){if(!em||!pw){fail('Remplis l’email et le mot de passe');return;}busy();
+      try{const box=await ghAdminBox();if(!box){mode='setup';draw();return;}
+        let o;try{o=await unseal(box,pw);}catch(_){fail('Email ou mot de passe incorrect');return;}if((o.email||'').toLowerCase()!==em){fail('Email ou mot de passe incorrect');return;}
+        ghToken=o.token;ghEmail=o.email;try{await gh('');}catch(e){ghToken=null;fail(e.status===401?'Ton jeton GitHub a expiré : supprime data/admin.json sur GitHub et recrée ton accès':ghErr(e));return;}
+        done(dl.querySelector('[name="keep"]').checked);}catch(e){fail('Connexion impossible pour le moment. Réessaie dans un instant.');}return;}
+    if(mode==='setup'){const pw2=val('pw2'),tk=val('tk').trim();if(!/^\S+@\S+\.\S+$/.test(em)){fail('Email invalide');return;}if(pw.length<10){fail('Mot de passe trop court (10 caractères minimum)');return;}if(pw!==pw2){fail('Les deux mots de passe ne sont pas identiques');return;}if(tk.length<20){fail('Colle ton jeton GitHub');return;}
+      busy();ghToken=tk;ghEmail=em;try{await gh('');const box=await seal({email:em,token:tk},pw);await ghCommit({'data/admin.json':JSON.stringify(box,null,1)},'Accès admin (jeton chiffré)');done(true);}catch(e){ghToken=null;fail(ghErr(e));}}};
+  dl.onclick=async e=>{if(e.target===dl){dl.close();return;}const b=e.target.closest('button');if(!b)return;
+    if(b.hasAttribute('data-close'))dl.close();else if(b.hasAttribute('data-go'))go();else if(b.hasAttribute('data-out')){dl.close();ghLogout();}
+    else if(b.hasAttribute('data-chpw')){const np=val('np'),np2=val('np2');if(np.length<10){fail('Mot de passe trop court (10 caractères minimum)');return;}if(np!==np2){fail('Les deux mots de passe ne sont pas identiques');return;}
+      b.disabled=true;try{const box=await seal({email:ghEmail,token:ghToken},np);await ghCommit({'data/admin.json':JSON.stringify(box,null,1)},'Accès admin : nouveau mot de passe');toast('Mot de passe changé');dl.close();}catch(err){b.disabled=false;fail(ghErr(err));}}};
+  dl.onkeydown=e=>{if(e.key==='Enter'&&e.target.matches('input')&&mode!=='account'){e.preventDefault();go();}};
+  draw();dl.showModal();setTimeout(()=>{const f=dl.querySelector('input');if(f&&matchMedia('(pointer:fine)').matches)f.focus();},50);}
+document.addEventListener('click',e=>{if(e.target.closest('#roleSide,#roleTop')){if(owner&&!ghToken){toast('Tu es déjà admin sur cette page');return;}if(!owner&&window.claude&&typeof window.claude.use==='function'){toast('Ici, le côté admin s’ouvre tout seul sur ton compte Claude. Sinon, connecte-toi depuis le site GitHub');return;}adminDialog();}});
+
 /* ---------- Démarrage ---------- */
-fetch('data/state.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();}).then(s=>{state=s;s.plans.forEach(p=>{p.photos=p.photos||[];p.specs=p.specs||[];p.checklist=p.checklist||[];p.equipment=p.equipment||[];});nav();route();})
+if(ghRestore())owner=true;
+fetch('data/state.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();}).then(s=>{state=s;s.plans.forEach(p=>{p.photos=p.photos||[];p.specs=p.specs||[];p.checklist=p.checklist||[];p.equipment=p.equipment||[];});nav();route();if(ghToken)ghFresh();})
   .catch(()=>{$('#view').innerHTML='<div class="empty">Les plans n’ont pas pu être chargés. Recharge la page.</div>';});
 (async()=>{if(!(window.claude&&typeof window.claude.use==='function'))return;
   const [a,u,c,d]=await Promise.all([window.claude.use('artifact').catch(()=>null),window.claude.use('user').catch(()=>null),window.claude.use('comments').catch(()=>null),window.claude.use('db').catch(()=>null)]);
-  art=a;cm=c;db=d;usr=u;owner=!!(u&&await u.isOwner().catch(()=>false));
+  art=a;cm=c;db=d;usr=u;owner=owner||!!(u&&await u.isOwner().catch(()=>false));
   if(u){try{myId=await u.id();}catch(_){}try{canWrite=await u.can('data.write');}catch(_){}}
   startComments();startChecks();if(state){nav();route();}})();
 </script>

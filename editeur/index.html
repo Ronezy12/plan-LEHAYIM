@@ -991,8 +991,21 @@ $('#exportBtn').onclick=()=>dlg(`<h3 style="margin:0;font:800 18px var(--display
 $('#dlg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.id==='xPng'){$('#dlg').close();exportPNG();}if(b.id==='xCsv'){$('#dlg').close();exportCSV();}if(b.id==='xJson'){$('#dlg').close();offer(slug()+'.json',JSON.stringify(P,null,1));}});
 $('#dlg').addEventListener('change',async e=>{if(e.target.id!=='xImp'||!e.target.files[0])return;try{const o=JSON.parse(await e.target.files[0].text());if(!o.items||!o.room)throw 0;o.id='p'+uid();store.projects.push(o);P=o;markDirty();fillProjects();$('#dlg').close();fit();render();toast('Plan importé');}catch(_){toast('Ce fichier n’est pas un plan valide');}});
 
+/* ================= Enregistrement sur GitHub (admin connecté depuis l’accueil) ================= */
+const GH={owner:'Ronezy12',repo:'plan-LEHAYIM',branch:'main'};let ghToken=null,ghEmail='';
+const GH_KEY='djron-admin';
+const u8b64=u=>{let s='';for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s);};
+async function gh(path,opt={}){const r=await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}${path}`,{...opt,headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',Authorization:'Bearer '+ghToken,...(opt.body?{'Content-Type':'application/json'}:{}),...(opt.headers||{})}});
+  if(!r.ok){const e=new Error('github '+r.status);e.status=r.status;try{e.msg=(await r.json()).message;}catch(_){}throw e;}return r.status===204?null:(opt.raw?r.text():r.json());}
+const blobB64=b=>new Promise((res,rej)=>{const f=new FileReader();f.onload=()=>res(String(f.result).split(',')[1]);f.onerror=rej;f.readAsDataURL(b);});
+async function ghCommit(files,msg){for(let tries=0;;tries++){try{
+  const ref=await gh('/git/ref/heads/'+GH.branch),base=ref.object.sha,bc=await gh('/git/commits/'+base),tree=[];
+  for(const [path,data] of Object.entries(files)){const content=typeof data==='string'?u8b64(new TextEncoder().encode(data)):await blobB64(data);const bl=await gh('/git/blobs',{method:'POST',body:JSON.stringify({content,encoding:'base64'})});tree.push({path,mode:'100644',type:'blob',sha:bl.sha});}
+  const t=await gh('/git/trees',{method:'POST',body:JSON.stringify({base_tree:bc.tree.sha,tree})}),c=await gh('/git/commits',{method:'POST',body:JSON.stringify({message:msg,tree:t.sha,parents:[base]})});
+  await gh('/git/refs/heads/'+GH.branch,{method:'PATCH',body:JSON.stringify({sha:c.sha})});return c.sha;}catch(e){if(tries<1&&(e.status===409||e.status===422))continue;throw e;}}}
+function ghRestore(){try{const s=JSON.parse(localStorage.getItem(GH_KEY)||'null');if(s&&s.t&&s.exp>Date.now()){ghToken=s.t;ghEmail=s.e||'';return true;}localStorage.removeItem(GH_KEY);}catch(_){}return false;}
 /* ================= Enregistrement ================= */
-$('#save').onclick=async()=>{const b=$('#save');if(!art||!owner){try{localStorage.setItem('djron-studio-draft',JSON.stringify(store));}catch(e){}toast(art?'Enregistrement réservé à l’admin : brouillon gardé sur cet appareil':'Brouillon gardé sur cet appareil');return;}
+$('#save').onclick=async()=>{const b=$('#save');if(ghToken){b.classList.add('is-loading');try{await ghCommit({'editeur/data/projects.json':JSON.stringify(store)},'Plans du Studio d’implantation');dirty=false;b.classList.remove('is-dirty');toast('Plans enregistrés sur GitHub');}catch(e){toast(e.status===401?'Session admin expirée : reconnecte-toi depuis l’accueil':'Échec de l’enregistrement ('+(e.status||'réseau')+')');}b.classList.remove('is-loading');return;}if(!art||!owner){try{localStorage.setItem('djron-studio-draft',JSON.stringify(store));}catch(e){}toast(art?'Enregistrement réservé à l’admin : brouillon gardé sur cet appareil':'Brouillon gardé sur cet appareil. Connecte-toi en admin depuis l’accueil pour enregistrer');return;}
   b.classList.add('is-loading');try{await art.publish({'data/projects.json':{content:JSON.stringify(store),contentType:'application/json'}});dirty=false;b.classList.remove('is-dirty');toast('Plans enregistrés');}
   catch(e){toast(e&&e.code==='conflict'?'Une autre version a été enregistrée, la page va se recharger':'Échec de l’enregistrement ('+(e&&e.code||'erreur')+')');}b.classList.remove('is-loading');};
 addEventListener('beforeunload',e=>{if(dirty&&owner){e.preventDefault();e.returnValue='';}});
@@ -1187,14 +1200,14 @@ function loadPeniche(p){const I=(t,x,y,o={})=>{const it={id:uid(),t,x,y,r:0,...o
 
 /* ================= Démarrage ================= */
 renderCatalog();
-(async()=>{let data=null;try{const r=await fetch('data/projects.json',{cache:'no-store'});if(r.ok)data=await r.json();}catch(e){}
+(async()=>{let data=null;if(ghRestore())owner=true;if(ghToken){try{data=JSON.parse(await gh('/contents/editeur/data/projects.json?ref='+GH.branch,{raw:true,headers:{Accept:'application/vnd.github.raw'}}));}catch(e){}}if(!data){try{const r=await fetch('data/projects.json',{cache:'no-store'});if(r.ok)data=await r.json();}catch(e){}}
   let draft=null;try{draft=JSON.parse(localStorage.getItem('djron-studio-draft')||'null');}catch(e){}
   store=data&&data.projects&&data.projects.length?data:{projects:[]};if(!store.projects.length){const p=blank('LEHAIIM · Bal du Nouvel An');loadTemplate(p);store.projects.push(p,blank('Péniche'),blank('Seguin Sound'),blank('Jump'));}
   P=store.projects[0];fillProjects();$('#undo').disabled=true;$('#redo').disabled=true;requestAnimationFrame(()=>{fit();render();});
   if(draft&&draft.projects&&JSON.stringify(draft)!==JSON.stringify(store)){setTimeout(()=>dlg(`<h3 style="margin:0;font:800 18px var(--display)">Brouillon trouvé</h3><div class="muted">Des modifications non enregistrées sont gardées sur cet appareil.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" id="useDraft">Reprendre le brouillon</button><button class="btn" id="dropDraft" data-close>Ignorer</button></div>`),400);
     document.addEventListener('click',function h(e){if(e.target.id==='useDraft'){store=draft;P=store.projects[0];fillProjects();$('#dlg').close();fit();render();markDirty();document.removeEventListener('click',h);}if(e.target.id==='dropDraft'){try{localStorage.removeItem('djron-studio-draft');}catch(_){}document.removeEventListener('click',h);}});}
   if(window.claude&&typeof window.claude.use==='function'){const [a,u,d]=await Promise.all([window.claude.use('artifact').catch(()=>null),window.claude.use('user').catch(()=>null),window.claude.use('downloads').catch(()=>null)]);
-    art=a;dl=d;owner=!!(u&&await u.isOwner().catch(()=>false));if(!owner)$('#save').querySelector('span:last-child').textContent='Brouillon';}})();
+    art=a;dl=d;owner=!!ghToken||!!(u&&await u.isOwner().catch(()=>false));if(!owner)$('#save').querySelector('span:last-child').textContent='Brouillon';}})();
 addEventListener('resize',()=>{render2();resize3d();});
 </script>
 
