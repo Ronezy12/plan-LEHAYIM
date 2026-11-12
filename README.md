@@ -9,6 +9,7 @@ Implantation technique du **Bal du Nouvel An LEHAIIM** : booth DJ façon festiva
 | Chemin | Rôle |
 |---|---|
 | `index.html` | Accueil : dernières mises à jour, plan prêt (LEHAIIM), plans en cours (Péniche, Seguin Sound, Jump, autres salles) |
+| `editeur/` | Éditeur d'implantation : catalogue, glisser-déposer, câbles, couverture, inventaire, puissance, 3D |
 | `plans/lehayim/` | Plan LEHAIIM : 3D, plan 2D, vue de face, visite guidée, fiche de chaque appareil, export PNG |
 | `data/state.json` | Contenu de l'accueil : plans, statuts, photos, mises à jour |
 | `photos/` | Photos des lieux |
