@@ -240,6 +240,8 @@ dialog.lb img{display:block;width:100%;max-height:80vh;object-fit:contain;transi
 .tabs .nbadge{position:absolute;margin:0;transform:translate(14px,-4px);}
 .tabs a{position:relative;}
 @media (max-width:900px){.cmform{flex-direction:column;align-items:stretch;}.cm{padding:12px 14px;}.cmform{padding:12px 14px 16px;}}
+/* Pas de zoom automatique au focus sur iPhone : 16 px minimum dans les champs sur écrans tactiles */
+@media (hover:none),(max-width:900px){input,select,textarea{font-size:16px!important;}}
 /* Motion, profondeur et couches */
 :root{--dur-fast:140ms;--dur-mid:220ms;--dur-panel:320ms;--ease-out:cubic-bezier(.2,.7,.2,1);--z-bar:25;--z-save:30;--z-toast:60;}
 .btn{transition:background var(--dur-fast),border-color var(--dur-fast),transform 100ms,box-shadow var(--dur-mid),filter var(--dur-fast);}
